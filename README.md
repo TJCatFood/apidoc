@@ -10,7 +10,11 @@
 
 ## Tool
 
+[OpenAPI (Swagger) Editor](https://marketplace.visualstudio.com/items?itemName=42Crunch.vscode-openapi) (Recommended)
+
 [Postman](https://www.postman.com/)
 
 - [Designing and developing your API](https://learning.postman.com/docs/designing-and-developing-your-api/the-api-workflow/)
 - [Documenting your API](https://learning.postman.com/docs/publishing-your-api/documenting-your-api/)
+
+[Swagger Tools](https://swagger.io/tools/open-source/)
