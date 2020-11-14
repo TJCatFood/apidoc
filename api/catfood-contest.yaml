@@ -15,14 +15,14 @@ paths:
       parameters:
         - name: studentId
           in: query
-          description: 查询的学生id
+          description: 查询的学生 ID
           required: true
           schema:
             type: integer
             format: int32
         - name: courseId
           in: query
-          description: 查询的课程id
+          description: 查询的课程 ID
           required: true
           schema:
             type: integer
