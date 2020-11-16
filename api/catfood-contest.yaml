@@ -9,7 +9,7 @@ paths:
   /matches:
     get:
       summary: '获取某个学生在某门课程的参加比赛历史'
-      operationId: get-mateches
+      operationId: get-matches
       tags:
         - match
       parameters:
@@ -37,7 +37,101 @@ paths:
                 items:
                   $ref: '#/components/schemas/matches'
         '400':
-          description: 'Bad Request - Invalid user ID or course ID supplied'
+          description: 'ad Request - Invalid user ID or course ID supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - user or course not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /match/{matchId}:
+    get:
+      summary: ' 学生查看某门课程自己某场比赛详情'
+      operationId: get-match-matchId
+      tags:
+        - match
+      parameters:
+        - name: matchId
+          in: path
+          description: 查询的参加比赛的 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'OK - Successfully obtained match'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/match'
+        '400':
+          description: 'Bad Request - Invalid match ID supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - match not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /matches/{contestId}?type=0: 
+    get:
+      summary: '老师查看某次比赛的所有对抗成绩'
+      operationId: get-matches-contestId-0
+      tags:
+        - match
+      parameters:
+        - name: contestId
+          in: path
+          description: 查询的比赛的 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: type
+          in: query
+          description: 确定返回的数据类型
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'OK - 成功获取比赛列表，type为0时以对抗为单位，type为1时以学生为单位 '
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  courseId:
+                    type: integer
+                    format: int32
+                  matches:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/contestMatches'
+    
+        '400':
+          description: 'Bad Request - Invalid contest ID or type supplied'
           content:
             application/json:
               schema:
@@ -48,6 +142,354 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /matches/{contestId}?type=1: 
+    get:
+      summary: '老师查看某次比赛的所有对抗成绩'
+      operationId: get-matches-contestId-1
+      tags:
+        - match
+      parameters:
+        - name: contestId
+          in: path
+          description: 查询的比赛的 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: type
+          in: query
+          description: 确定返回的数据类型
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'OK - 成功获取比赛列表，type为0时以对抗为单位，type为1时以学生为单位 '
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  courseId:
+                    type: integer
+                    format: int32
+                  matches:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/studentMatches'
+    
+        '400':
+          description: 'Bad Request - Invalid contest ID or type supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - contest not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /contest:
+    get:
+      summary: '获取某门课程下的还未开始的比赛（一个或没有）'
+      operationId: get-contest-courseId
+      tags:
+        - contest
+      parameters:
+        - name: courseId
+          in: query
+          description: 查询的课程 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'OK - Successfully obtained contest'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/contest'
+        '400':
+          description: 'Bad Request - Invalid course ID supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - contest not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: '老师发布某门课程的比赛'
+      operationId: post-contest-userId
+      tags:
+        - contest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contest:
+                  $ref: '#/components/schemas/postContest'
+      responses:
+        '201':
+          description: 'OK - Contest created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/contest' 
+        '400':
+          description: 'Bad Request - Invalid user ID or course ID supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - user or course not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'      
+  /questions:
+    get:
+      summary: '老师查看题库内的所有题目列表'
+      operationId: get-questions
+      tags:
+        - question
+      responses:
+        '200':
+          description: 'OK - Successfully obtained question list'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/questions'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /question/{questionType}/{questionId}: 
+    get:
+      summary: '老师查看题库中某一题目的详情'
+      operationId: get-question-questionType-questionId
+      tags:
+        - question
+      parameters:
+        - name: questionType
+          in: path
+          description: 获取的题目类型（0为单选， 1为多选）
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: questionId
+          in: path
+          description: 获取的题目 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'OK - Successfully obtained question'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/question'
+        '400':
+          description: 'Bad Request - Invalid question ID or question type supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - question not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: '老师增加题库中的题目'
+      operationId: put-question-questionType-questionId
+      tags:
+        - question
+      parameters:
+        - name: questionType
+          in: path
+          description: 修改的题目类型（0为单选， 1为多选）
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: questionId
+          in: path
+          description: 修改的题目 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/putQuestion'
+      responses:
+        '200':
+          description: 'OK - question changed'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:            
+                  question:
+                    type: object
+                    $ref: '#/components/schemas/question' 
+        '400':
+          description: 'Bad Request - Invalid question ID or type or user ID supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - question or user not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: '老师删除题库中的题目'
+      operationId: delete-question-questionType-questionId
+      tags:
+        - question
+      parameters:
+        - name: questionType
+          in: path
+          description: 修改的题目类型（0为单选， 1为多选）
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: questionId
+          in: path
+          description: 修改的题目 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: userId
+          in: query
+          description: 操作者 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'OK - question deleted'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:            
+                  question:
+                    type: object
+                    $ref: '#/components/schemas/question' 
+        '400':
+          description: Bad Request - Invalid question ID or type or user ID supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - question not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /question:
+    post:
+      summary: '老师增加题库中的题目'
+      operationId: post-question-userId
+      tags:
+        - question
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contest:
+                  $ref: '#/components/schemas/postQuestion'
+      responses:
+        '201':
+          description: 'OK - question created'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:            
+                  question:
+                    type: object
+                    $ref: '#/components/schemas/question' 
+        '400':
+          description: 'Bad Request - Invalid user ID or question type supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
         default:
           description: Unexpected error
           content:
@@ -70,13 +512,15 @@ components:
         - description
         - rank
         - score
+        - courseId
+        - publisherId
       properties:
         matchId:
           type: integer
-          format: int64
+          format: int32
         constestId:
           type: integer
-          format: int64
+          format: int32
         timeStamp:
           type: string
           format: date-time
@@ -84,7 +528,7 @@ components:
           type: string
         participantNumber:
           type: integer
-          format: int64
+          format: int32
         startTime:
           type: string
           format: date-time
@@ -93,15 +537,85 @@ components:
           format: date-time
         chapter:
           type: integer
-          format: int64
+          format: int32
         description:
           type: string
         rank:
           type: integer
-          format: int64
+          format: int32
         score:
           type: integer
-          format: int64
+          format: int32
+        courseId:
+          type: integer
+          format: int32
+        publisherId:
+          type: integer
+          format: int32
+    match:
+      type: object
+      required:
+        - userId
+        - constestId
+        - courseId
+        - timeStamp
+        - title
+        - publisherId
+        - participantNumber
+        - startTime
+        - endTime
+        - chapter
+        - description
+        - rank
+        - score
+        - participants
+        - questionAndAnswers
+      properties:
+        userId:
+          type: integer
+          format: int32
+        constestId:
+          type: integer
+          format: int32
+        courseId:
+          type: integer
+          format: int32
+        timeStamp:
+          type: string
+          format: date-time
+        title:
+          type: string
+        publisherId:
+          type: integer
+          format: int32
+        participantNumber:
+          type: integer
+          format: int32
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        chapter:
+          type: integer
+          format: int32
+        description:
+          type: string
+        rank:
+          type: integer
+          format: int32
+        score:
+          type: integer
+          format: int32
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/participant'
+        questionAndAnswers:
+          type: array
+          items:
+            $ref: '#/components/schemas/questionAndAnswer'
     badRequest:
       title: Bad Request
       type: object
@@ -130,3 +644,367 @@ components:
           properties:
             message:
               type: string
+    participant:
+      type: object
+      required:
+        - userId
+        - nickname
+        - avatar
+        - rank
+      properties:
+        userId:
+          type: integer
+          format: int32
+        nickname:
+          type: string
+        avatar: 
+          type: string
+        rank:
+          type: integer
+          format: int32
+    question:
+      type: object
+      required:
+        - questionId
+        - questionType
+        - questionChapter
+        - questionContent
+        - questionAnswer
+        - questionChoiceAContent
+        - questionChoiceBContent
+      properties:
+        questionId:
+          type: integer
+          format: int32
+        questionType:
+          type: integer
+          format: int32
+        questionChapter:
+          type: integer
+          format: int32
+        questionContent:
+          type: string
+        questionAnswer:
+          type: string
+        questionChoiceAContent:
+          type: string
+        questionChoiceBContent:
+          type: string
+        questionChoiceCContent:
+          type: string
+        questionChoiceDContent:
+          type: string
+    contest:
+      type: object
+      required: 
+        - constestId
+        - publisherId
+        - title
+        - participantNumber
+        - startTime
+        - endTime
+        - chapter
+        - description
+        - courseId
+      properties:
+        constestId:
+          type: integer
+          format: int32
+        publisherId:
+          type: integer
+          format: int32
+        title:
+          type: string
+        participantNumber:
+          type: integer
+          format: int32
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        chapter:
+          type: integer
+          format: int32
+        description:
+          type: string
+        courseId:
+          type: integer
+          format: int32
+    questions:
+      type: object
+      required:
+        - questionId
+        - questionType
+        - questionChapter
+        - questionContent
+      properties:
+        questionId:
+          type: integer
+          format: int32
+        questionType:
+          type: integer
+          format: int32
+        questionChapter:
+          type: integer
+          format: int32
+        questionContent:
+          type: string
+    questionAndAnswer:
+      type: object
+      required:
+        - question
+        - answer
+      properties:
+        question:
+          type: object
+          $ref: '#/components/schemas/question'
+        answer:
+          type: string
+    postContest:
+      type: object
+      required: 
+        - publisherId
+        - title
+        - participantNumber
+        - startTime
+        - endTime
+        - chapter
+        - description
+        - randomQuestions
+        - courseId
+      properties:
+        publisherId:
+          type: integer
+          format: int32
+        title:
+          type: string
+        participantNumber:
+          type: integer
+          format: int32
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        chapter:
+          type: integer
+          format: int32
+        description:
+          type: string
+        randomQuestions:
+          type: boolean
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/choosedQuestion'
+        courseId:
+          type: integer
+          format: int32
+    choosedQuestion:
+      type: object
+      required:
+        - questionType
+        - questionId
+      properties:
+        questionType:
+          type: integer
+          format: int32
+        questionId:
+          type: integer
+          format: int32
+    contestMatches:
+      type: object
+      required: 
+        - constestId
+        - publisherId
+        - title
+        - participantNumber
+        - startTime
+        - endTime
+        - chapter
+        - description
+        - courseId
+        - matchId
+        - timeStamp
+        - participants
+      properties:
+        constestId:
+          type: integer
+          format: int32
+        publisherId:
+          type: integer
+          format: int32
+        title:
+          type: string
+        participantNumber:
+          type: integer
+          format: int32
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        chapter:
+          type: integer
+          format: int32
+        description:
+          type: string
+        courseId:
+          type: integer
+          format: int32
+        matchId:
+          type: integer
+          format: int32
+        timeStamp:
+          type: string
+          format: date-time
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/userParticipant'
+    studentMatches:
+      type: object
+      required:
+        - userId
+        - email
+        - name
+        - avatar
+        - universityId
+        - universityName
+        - schoolId
+        - schoolName
+        - matches
+      properties:
+        userId:
+          type: integer
+          format: int32
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        avatar:
+          type: string
+          format: url
+        universityId:
+          type: integer
+          format: int32
+        universityName:
+          type: string
+        schoolId:
+          type: integer
+          format: int32
+        schoolName:
+          type: string
+        matches:
+          type: array
+          items:
+            $ref: '#/components/schemas/matches'
+    userParticipant:
+      type: object
+      required: 
+        - userId
+        - email
+        - name
+        - avatar
+        - universityId
+        - universityName
+        - schoolId
+        - schoolName
+        - rank
+        - score
+      properties:
+        userId:
+          type: integer
+          format: int32
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        avatar:
+          type: string
+          format: url
+        universityId:
+          type: integer
+          format: int32
+        universityName:
+          type: string
+        schoolId:
+          type: integer
+          format: int32
+        schoolName:
+          type: string
+        rank:
+          type: integer
+          format: int32
+        score:
+          type: integer
+          format: int32
+    postQuestion:
+      type: object
+      required:
+        - userId
+        - questionType
+        - questionChapter
+        - questionContent
+        - questionAnswer
+        - questionChoiceAContent
+        - questionChoiceBContent
+      properties:
+        userId:
+          type: integer
+          format: int32
+        questionType:
+          type: integer
+          format: int32
+        questionChapter:
+          type: integer
+          format: int32
+        questionContent:
+          type: string
+        questionAnswer:
+          type: string
+        questionChoiceAContent:
+          type: string
+        questionChoiceBContent:
+          type: string
+        questionChoiceCContent:
+          type: string
+        questionChoiceDContent:
+          type: string
+    putQuestion:
+      type: object
+      required:
+        - userId
+        - questionChapter
+        - questionContent
+        - questionAnswer
+        - questionChoiceAContent
+        - questionChoiceBContent
+      properties:
+        userId:
+          type: integer
+          format: int32
+        questionChapter:
+          type: integer
+          format: int32
+        questionContent:
+          type: string
+        questionAnswer:
+          type: string
+        questionChoiceAContent:
+          type: string
+        questionChoiceBContent:
+          type: string
+        questionChoiceCContent:
+          type: string
+        questionChoiceDContent:
+          type: string
+
+
+
