@@ -37,7 +37,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/matches'
         '400':
-          description: 'ad Request - Invalid user ID or course ID supplied'
+          description: 'Bad Request - Invalid user ID or course ID supplied'
           content:
             application/json:
               schema:
@@ -116,7 +116,7 @@ paths:
             format: int32
       responses:
         '200':
-          description: 'OK - 成功获取比赛列表，type为0时以对抗为单位，type为1时以学生为单位 '
+          description: 'OK - 成功获取比赛列表，type 为 0 时以对抗为单位，type 为 1 时以学生为单位'
           content:
             application/json:
               schema:
@@ -171,7 +171,7 @@ paths:
             format: int32
       responses:
         '200':
-          description: 'OK - 成功获取比赛列表，type为0时以对抗为单位，type为1时以学生为单位 '
+          description: 'OK - 成功获取比赛列表，type 为 0 时以对抗为单位，type 为 1 时以学生为单位'
           content:
             application/json:
               schema:
@@ -310,7 +310,7 @@ paths:
       parameters:
         - name: questionType
           in: path
-          description: 获取的题目类型（0为单选， 1为多选）
+          description: 获取的题目类型（ 0 为单选， 1 为多选）
           required: true
           schema:
             type: integer
@@ -357,7 +357,7 @@ paths:
       parameters:
         - name: questionType
           in: path
-          description: 修改的题目类型（0为单选， 1为多选）
+          description: 修改的题目类型（ 0 为单选， 1 为多选）
           required: true
           schema:
             type: integer
@@ -411,7 +411,7 @@ paths:
       parameters:
         - name: questionType
           in: path
-          description: 修改的题目类型（0为单选， 1为多选）
+          description: 修改的题目类型（ 0 为单选， 1 为多选）
           required: true
           schema:
             type: integer
