@@ -1,0 +1,9 @@
+# openapi: 3.0.0
+# info:
+#   version: 0.0.1
+#   title: catfood-course-databse
+#   description: 理论课程教学作业模块 API
+# servers:
+#   - url: "http://localhost:8000/api/v1/course-homework"
+
+# paths:
