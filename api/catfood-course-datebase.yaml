@@ -44,7 +44,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/badRequest"
         "403":
-          description: "Permission Denied - provided user has no permission to access the course"
+          description: "Permission Denied - provided user do not has the permission to access the course"
           content:
             application/json:
               schema:
@@ -88,7 +88,7 @@ paths:
               format: binary
       responses:
         "201":
-          description: "Created - Successfully created new file"
+          description: "OK - Successfully created new file"
           content:
             application/json:
               schema:
@@ -102,7 +102,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/badRequest"
         "403":
-          description: "Permission Denied - provided user has no permission to access the course"
+          description: "Permission Denied - provided user do not has the permission to access the course"
           content:
             application/json:
               schema:
@@ -147,7 +147,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/badRequest"
         "403":
-          description: "Permission Denied - provided user has no permission to access the course"
+          description: "Permission Denied - provided user do not has the permission to access the course"
           content:
             application/json:
               schema:
@@ -185,7 +185,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/badRequest"
         "403":
-          description: "Permission Denied - provided user has no permission to access the course"
+          description: "Permission Denied - provided user do not has the permission to access the course"
           content:
             application/json:
               schema:
@@ -230,7 +230,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/badRequest"
         "403":
-          description: "Permission Denied - provided user has no permission to access the course"
+          description: "Permission Denied - provided user do not has the permission to access the course"
           content:
             application/json:
               schema:
@@ -266,7 +266,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/badRequest"
         "403":
-          description: "Permission Denied - provided user has no permission to access the course"
+          description: "Permission Denied - provided user do not has the permission to access the course"
           content:
             application/json:
               schema:
