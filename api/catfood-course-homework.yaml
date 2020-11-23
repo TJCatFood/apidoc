@@ -326,7 +326,7 @@ paths:
       summary: "学生提交作业（覆盖原有作业）"
       operationId: handin-homework
       tags:
-        - course
+        - course-homework
       parameters:
         - name: courseId
           in: path
@@ -396,7 +396,7 @@ paths:
       summary: "删除该学生这次作业的提交"
       operationId: delete-homework
       tags:
-        - course
+        - course-homework
       parameters:
         - name: courseId
           in: path
@@ -443,10 +443,10 @@ paths:
                 $ref: "#/components/schemas/Error"
   /{courseId}/homework/{homeworkId}/file/{homeworkFileId}:
     get:
-      summary: "获取文件"
+      summary: "获取作业文件"
       operationId: get-file-for-course-homework
       tags:
-        - course
+        - course-homework
       parameters:
         - name: courseId
           in: path
@@ -500,10 +500,10 @@ paths:
                 $ref: "#/components/schemas/Error"
   /{courseId}/homework/{homeworkId}/file/{homeworkFileId}/score:
     get:
-      summary: "获取分数"
+      summary: "获取作业分数"
       operationId: get-file-score-for-course-homework
       tags:
-        - course
+        - course-homework
       parameters:
         - name: courseId
           in: path
@@ -559,7 +559,7 @@ paths:
       summary: "根据文件登记分数"
       operationId: set-file-score-for-course-homework
       tags:
-        - course
+        - course-homework
       parameters:
         - name: courseId
           in: path
