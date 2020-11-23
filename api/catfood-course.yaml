@@ -7,14 +7,14 @@ servers:
   - url: "http://localhost:8000/api/v1/course"
 
 paths:
-  /course_student/{student_id}:
+  /courseStudent/{studentID}:
     get:
       summary: "获取当前登陆学生账号的全部课程"
-      operationId: student_get_all_course
+      operationId: student-get-all-course
       tags:
-        - course_student
+        - courseStudent
       parameters:
-        - name: student_id
+        - name: studentID
           in: path
           description: 学生账号ID
           required: true
@@ -29,7 +29,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/course_student"
+                  $ref: "#/components/schemas/courseStudent"
         "400":
           description: "Bad Request - Invalid student ID supplied"
           content:
@@ -48,21 +48,21 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /course_student/{student_id}/{course_type}:
+  /courseStudent/{studentId}/{courseType}:
     get:
       summary: "获取当前登陆学生账号的某类型全部课程"
       operationId: student_get_type_course
       tags:
-        - course_student
+        - courseStudent
       parameters:
-        - name: student_id
+        - name: studentId
           in: path
           description: 学生账号ID
           required: true
           schema:
             type: integer
             format: int32
-        - name: course_type
+        - name: courseType
           in: path
           description: 课程类型（理论为0，实验为1）
           required: true
@@ -77,7 +77,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/course_student"
+                  $ref: "#/components/schemas/courseStudent"
         "400":
           description: "Bad Request - Invalid student ID or course type supplied"
           content:
@@ -96,14 +96,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /course_teacher/{teacher_id}:
+  /courseTeacher/{teacherId}:
     get:
       summary: "获取当前登陆教师/助教账号所上的全部课程"
-      operationId: teacher_get_all_course
+      operationId: teacher-get-all-course
       tags:
-        - course_teacher
+        - courseTeacher
       parameters:
-        - name: teacher_id
+        - name: teacherId
           in: path
           description: 教师/助教账号ID
           required: true
@@ -118,7 +118,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/course_teacher"
+                  $ref: "#/components/schemas/courseTeacher"
         "400":
           description: "Bad Request - Invalid teacher ID supplied"
           content:
@@ -137,21 +137,21 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /course_teacher/{teacher_id}/{course_type}:
+  /courseTeacher/{teacherId}/{courseType}:
     get:
       summary: "获取当前登陆教师/助教账号所上的全部课程"
-      operationId: teacher_get_type_course
+      operationId: teacher-get-type-course
       tags:
-        - course_teacher
+        - courseTeacher
       parameters:
-        - name: teacher_id
+        - name: teacherId
           in: path
           description: 教师/助教账号ID
           required: true
           schema:
             type: integer
             format: int32
-        - name: course_type
+        - name: courseType
           in: path
           description: 课程类型（理论为0，实验为1）
           required: true
@@ -166,7 +166,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/course_teacher"
+                  $ref: "#/components/schemas/courseTeacher"
         "400":
           description: "Bad Request - Invalid teacher ID or course type supplied"
           content:
@@ -185,14 +185,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /course_principle/{teacher_id}:
+  /coursePrinciple/{teacherId}:
     get:
       summary: "获取责任教师所负责的全部课程"
-      operationId: principle_get_all_course
+      operationId: principle-get-all-course
       tags:
-        - course_principle
+        - coursePrinciple
       parameters:
-        - name: teacher_id
+        - name: teacherId
           in: path
           description: 责任教师账号ID
           required: true
@@ -207,7 +207,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/course_principle"
+                  $ref: "#/components/schemas/coursePrinciple"
         "400":
           description: "Bad Request - Invalid teacher ID supplied"
           content:
@@ -226,65 +226,65 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /course_principle:
+  /coursePrinciple:
     post: 
       summary: "责任教师新创建一门课程"
-      operationId: principle_create_course
+      operationId: principle-create-course
       tags:
-        - course_principle
+        - coursePrinciple
       parameters:
-        - name: course_name
+        - name: courseName
           in: query
           description: 课程名称
           required: true
           schema:
             type: string
-        - name: course_type
+        - name: courseType
           in: query
           description: 课程类型（理论为0，实验为1）
           required: true
           schema:
             type: integer
             format: int32
-        - name: course_credit
+        - name: courseCredit
           in: query
           description: 课程学分
           required: true
           schema:
             type: integer
             format: int32
-        - name: course_study_time_needed
+        - name: courseStudyTimeNeeded
           in: query
           description: 课程学时
           required: true
           schema:
             type: integer
             format: int32
-        - name: course_description
+        - name: courseDescription
           in: query
           description: 课程描述
           required: true
           schema:
             type: string
-        - name: course_start_time
+        - name: courseStartTime
           in: query
           description: 课程开始时间
           required: true
           schema:
             type: string
-        - name: course_end_time
+        - name: courseEndTime
           in: query
           description: 课程结束时间
           required: true
           schema:
             type: string
-        - name: teacher_name
+        - name: teacherName
           in: query
           description: 课程授课老师名称
           required: true
           schema:
             type: string
-        - name: course_avator
+        - name: courseAvator
           in: query
           description: 课程头像
           required: true
@@ -296,7 +296,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/course_principle"
+                $ref: "#/components/schemas/coursePrinciple"
                 
         "400":
           description: "Bad Request - Invalid user ID or course ID supplied"
@@ -318,69 +318,69 @@ paths:
                 $ref: "#/components/schemas/Error"
     put:
       summary: "责任教师编辑课程信息"
-      operationId: principle_edit_course
+      operationId: principle-edit-course
       tags:
-        - course_principle
+        - coursePrinciple
       parameters:
-        - name: course_id
+        - name: courseId
           in: query
           description: 课程ID
           required: true
           schema:
             type: integer
             format: int32
-        - name: course_name
+        - name: courseName
           in: query
           description: 课程名称
           required: true
           schema:
             type: string
-        - name: course_type
+        - name: courseType
           in: query
           description: 课程类型（理论为0，实验为1）
           required: true
           schema:
             type: integer
             format: int32
-        - name: course_credit
+        - name: courseCredit
           in: query
           description: 课程学分
           required: true
           schema:
             type: integer
             format: int32
-        - name: course_study_time_needed
+        - name: courseStudyTimeNeeded
           in: query
           description: 课程学时
           required: true
           schema:
             type: integer
             format: int32
-        - name: course_description
+        - name: courseDescription
           in: query
           description: 课程描述
           required: true
           schema:
             type: string
-        - name: course_start_time
+        - name: courseStartTime
           in: query
           description: 课程开始时间
           required: true
           schema:
             type: string
-        - name: course_end_time
+        - name: courseEndTime
           in: query
           description: 课程结束时间
           required: true
           schema:
             type: string
-        - name: teacher_name
+        - name: teacherName
           in: query
           description: 课程授课老师名称
           required: true
           schema:
             type: string
-        - name: course_avator
+        - name: courseAvator
           in: query
           description: 课程头像
           required: true
@@ -414,11 +414,11 @@ paths:
                 $ref: "#/components/schemas/Error"
     delete:
       summary: "责任教师删除班级"
-      operationId: principle_delete_course
+      operationId: principle-delete-course
       tags:
-        - course_principle
+        - coursePrinciple
       parameters:
-        - name: course_id
+        - name: courseId
           in: query
           description: 删除班级id
           required: true
@@ -452,99 +452,99 @@ paths:
                 $ref: "#/components/schemas/Error"
 components:
   schemas:
-    course_student:
+    courseStudent:
       type: object
       required:
-        - course_name
-        - course_type
-        - course_id
-        - course_credit
-        - teacher_name
-        - course_study_time_needed
-        - course_description
+        - courseName
+        - courseType
+        - courseId
+        - courseCredit
+        - teacherName
+        - courseStudyTimeNeeded
+        - courseDescription
       properties:
-        course_name:
+        courseName:
           type: string
-        course_type:
+        courseType:
           type: integer
           format: int32
-        course_id:
+        courseId:
           type: integer
           format: int32
-        course_credit:
+        courseCredit:
           type: integer
           format: int32
-        teacher_name:
+        teacherName:
           type: string
-        course_study_time_needed:
+        courseStudyTimeNeeded:
           type: integer
           format: int32
-        course_description:
+        courseDescription:
           type: string
-    course_teacher:
+    courseTeacher:
       type: object
       required:
-        - course_name
-        - course_type
-        - course_id
-        - course_credit
-        - course_study_time_needed
-        - course_description
-        - course_start_time
-        - course_end_time
+        - courseName
+        - courseType
+        - courseId
+        - courseCredit
+        - courseStudyTimeNeeded
+        - courseDescription
+        - courseStartTime
+        - courseEndTime
       properties:
-        course_name:
+        courseName:
           type: string
-        course_type:
+        courseType:
           type: integer
           format: int32
-        course_id:
+        courseId:
           type: integer
           format: int32
-        course_credit:
+        courseCredit:
           type: integer
           format: int32 
-        course_study_time_needed:
+        courseStudyTimeNeeded:
           type: integer
           format: int32
-        course_description:
+        courseDescription:
           type: string
-        course_start_time:
+        courseStartTime:
           type: string
-        course_end_time:
+        courseEndTime:
           type: string
-    course_principle:
+    coursePrinciple:
       type: object
       required:
-        - course_name
-        - course_type
-        - course_id
-        - course_credit
-        - course_study_time_needed
-        - course_description
-        - course_start_time
-        - course_end_time
-        - teacher_name
+        - courseName
+        - courseType
+        - courseId
+        - courseCredit
+        - courseStudyTimeNeeded
+        - courseDescription
+        - courseStartTime
+        - courseEndTime
+        - teacherName
       properties:
-        course_type:
+        courseType:
           type: integer
           format: int32
-        course_id:
+        courseId:
           type: integer
           format: int32
-        course_credit:
+        courseCredit:
           type: integer
           format: int32 
-        course_study_time_needed:
+        courseStudyTimeNeeded:
           type: integer
           format: int32
-        course_description:
+        courseDescription:
           type: string
-        course_start_time:
+        courseStartTime:
           type: string
-        course_end_time:
+        courseEndTime:
           type: string
-        teacher_name:
+        teacherName:
           type: string
 
     badRequest:
