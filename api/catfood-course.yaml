@@ -1,0 +1,578 @@
+openapi: 3.0.0
+info:
+  version: 0.0.1
+  title: catfood-course
+  description: 教学管理模块 API
+servers:
+  - url: "http://localhost:8000/api/v1/course"
+
+paths:
+  /courseStudent/{studentID}:
+    get:
+      summary: "获取当前登陆学生账号的全部课程"
+      operationId: student-get-all-course
+      tags:
+        - courseStudent
+      parameters:
+        - name: studentID
+          in: path
+          description: 学生账号ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "OK - Successfully obtained course list"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/courseStudent"
+        "400":
+          description: "Bad Request - Invalid student ID supplied"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "404":
+          description: "Not Found - student or course not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /courseStudent/{studentId}/{courseType}:
+    get:
+      summary: "获取当前登陆学生账号的某类型全部课程"
+      operationId: student_get_type_course
+      tags:
+        - courseStudent
+      parameters:
+        - name: studentId
+          in: path
+          description: 学生账号ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: courseType
+          in: path
+          description: 课程类型（理论为0，实验为1）
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "OK - Successfully obtained course list"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/courseStudent"
+        "400":
+          description: "Bad Request - Invalid student ID or course type supplied"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "404":
+          description: "Not Found - student or course type not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /courseTeacher/{teacherId}:
+    get:
+      summary: "获取当前登陆教师/助教账号所上的全部课程"
+      operationId: teacher-get-all-course
+      tags:
+        - courseTeacher
+      parameters:
+        - name: teacherId
+          in: path
+          description: 教师/助教账号ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "OK - Successfully obtained course list"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/courseTeacher"
+        "400":
+          description: "Bad Request - Invalid teacher ID supplied"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "404":
+          description: "Not Found - teacher or course not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /courseTeacher/{teacherId}/{courseType}:
+    get:
+      summary: "获取当前登陆教师/助教账号所上的全部课程"
+      operationId: teacher-get-type-course
+      tags:
+        - courseTeacher
+      parameters:
+        - name: teacherId
+          in: path
+          description: 教师/助教账号ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: courseType
+          in: path
+          description: 课程类型（理论为0，实验为1）
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "OK - Successfully obtained course list"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/courseTeacher"
+        "400":
+          description: "Bad Request - Invalid teacher ID or course type supplied"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "404":
+          description: "Not Found - teacher or course type not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /coursePrinciple/{teacherId}:
+    get:
+      summary: "获取责任教师所负责的全部课程"
+      operationId: principle-get-all-course
+      tags:
+        - coursePrinciple
+      parameters:
+        - name: teacherId
+          in: path
+          description: 责任教师账号ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "OK - Successfully obtained course list"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/coursePrinciple"
+        "400":
+          description: "Bad Request - Invalid teacher ID supplied"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "404":
+          description: "Not Found - teacher or course not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /coursePrinciple:
+    post: 
+      summary: "责任教师新创建一门课程"
+      operationId: principle-create-course
+      tags:
+        - coursePrinciple
+      parameters:
+        - name: courseName
+          in: query
+          description: 课程名称
+          required: true
+          schema:
+            type: string
+        - name: courseType
+          in: query
+          description: 课程类型（理论为0，实验为1）
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: courseCredit
+          in: query
+          description: 课程学分
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: courseStudyTimeNeeded
+          in: query
+          description: 课程学时
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: courseDescription
+          in: query
+          description: 课程描述
+          required: true
+          schema:
+            type: string
+        - name: courseStartTime
+          in: query
+          description: 课程开始时间
+          required: true
+          schema:
+            type: string
+        - name: courseEndTime
+          in: query
+          description: 课程结束时间
+          required: true
+          schema:
+            type: string
+        - name: teacherName
+          in: query
+          description: 课程授课老师名称
+          required: true
+          schema:
+            type: string
+        - name: courseAvator
+          in: query
+          description: 课程头像
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "OK - Successfully created course"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/coursePrinciple"
+                
+        "400":
+          description: "Bad Request - Invalid user ID or course ID supplied"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "404":
+          description: "Not Found - user or course not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: "责任教师编辑课程信息"
+      operationId: principle-edit-course
+      tags:
+        - coursePrinciple
+      parameters:
+        - name: courseId
+          in: query
+          description: 课程ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: courseName
+          in: query
+          description: 课程名称
+          required: true
+          schema:
+            type: string
+        - name: courseType
+          in: query
+          description: 课程类型（理论为0，实验为1）
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: courseCredit
+          in: query
+          description: 课程学分
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: courseStudyTimeNeeded
+          in: query
+          description: 课程学时
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: courseDescription
+          in: query
+          description: 课程描述
+          required: true
+          schema:
+            type: string
+        - name: courseStartTime
+          in: query
+          description: 课程开始时间
+          required: true
+          schema:
+            type: string
+        - name: courseEndTime
+          in: query
+          description: 课程结束时间
+          required: true
+          schema:
+            type: string
+        - name: teacherName
+          in: query
+          description: 课程授课老师名称
+          required: true
+          schema:
+            type: string
+        - name: courseAvator
+          in: query
+          description: 课程头像
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "OK - Successfully edited course"
+          content:
+            application/json:
+              schema:
+                type: boolean
+                
+        "400":
+          description: "Bad Request - Invalid course ID supplied"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "404":
+          description: "Not Found - user or course not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: "责任教师删除班级"
+      operationId: principle-delete-course
+      tags:
+        - coursePrinciple
+      parameters:
+        - name: courseId
+          in: query
+          description: 删除班级id
+          required: true
+          schema: 
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "OK - Successfully deleted course"
+          content:
+            application/json:
+              schema:
+                type: boolean    
+        "400":
+          description: "Bad Request - Invalid course ID supplied"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "404":
+          description: "Not Found - user or course not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    courseStudent:
+      type: object
+      required:
+        - courseName
+        - courseType
+        - courseId
+        - courseCredit
+        - teacherName
+        - courseStudyTimeNeeded
+        - courseDescription
+      properties:
+        courseName:
+          type: string
+        courseType:
+          type: integer
+          format: int32
+        courseId:
+          type: integer
+          format: int32
+        courseCredit:
+          type: integer
+          format: int32
+        teacherName:
+          type: string
+        courseStudyTimeNeeded:
+          type: integer
+          format: int32
+        courseDescription:
+          type: string
+    courseTeacher:
+      type: object
+      required:
+        - courseName
+        - courseType
+        - courseId
+        - courseCredit
+        - courseStudyTimeNeeded
+        - courseDescription
+        - courseStartTime
+        - courseEndTime
+      properties:
+        courseName:
+          type: string
+        courseType:
+          type: integer
+          format: int32
+        courseId:
+          type: integer
+          format: int32
+        courseCredit:
+          type: integer
+          format: int32 
+        courseStudyTimeNeeded:
+          type: integer
+          format: int32
+        courseDescription:
+          type: string
+        courseStartTime:
+          type: string
+        courseEndTime:
+          type: string
+    coursePrinciple:
+      type: object
+      required:
+        - courseName
+        - courseType
+        - courseId
+        - courseCredit
+        - courseStudyTimeNeeded
+        - courseDescription
+        - courseStartTime
+        - courseEndTime
+        - teacherName
+      properties:
+        courseType:
+          type: integer
+          format: int32
+        courseId:
+          type: integer
+          format: int32
+        courseCredit:
+          type: integer
+          format: int32 
+        courseStudyTimeNeeded:
+          type: integer
+          format: int32
+        courseDescription:
+          type: string
+        courseStartTime:
+          type: string
+        courseEndTime:
+          type: string
+        teacherName:
+          type: string
+
+    badRequest:
+      title: Bad Request
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    notFound:
+      title: Not Found
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    
