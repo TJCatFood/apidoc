@@ -14,6 +14,12 @@ paths:
       tags:
         - course-homework
       parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
         - name: itemCountOnOnePage
           in: query
           description: 一页返回的个数
@@ -67,25 +73,17 @@ paths:
       tags:
         - course-homework
       parameters:
-        - name: homeworkTitle
-          in: query
-          description: 作业标题
+        - name: courseId
+          in: path
+          description: 课程 ID
           required: true
           schema:
             type: string
-        - name: homeworkDescription
-          in: query
-          description: 作业描述
-          required: true
-          schema:
-            type: string
-        - name: homeworkEndTime
-          in: query
-          description: 作业截止时间
-          required: true
-          schema:
-            type: string
-            format: date-time
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/courseHomework'
       responses:
         "201":
           description: "Created - Successfully created new homework"
@@ -158,30 +156,22 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     put:
-      summary: "更改作业信息"
+      summary: "更改作业信息（只有作业标题，作业描述，作业截止时间受影响）"
       operationId: get-homework-detail
       tags:
         - course-homework
       parameters:
-        - name: homeworkTitle
-          in: query
-          description: 作业标题
+        - name: courseId
+          in: path
+          description: 课程 ID
           required: true
           schema:
             type: string
-        - name: homeworkDescription
-          in: query
-          description: 作业描述
-          required: true
-          schema:
-            type: string
-        - name: homeworkEndTime
-          in: query
-          description: 作业截止时间
-          required: true
-          schema:
-            type: string
-            format: date-time
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/courseHomework'
       responses:
         "200":
           description: "OK - Course homework details is successfullt altered"
@@ -221,6 +211,19 @@ paths:
       operationId: get-file-list-for-course-homework
       tags:
         - course
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+        - name: homeworkId
+          in: path
+          description: 作业 ID
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: "OK - Successfully obtained the count of files from currrent homework"
@@ -255,11 +258,23 @@ paths:
                 $ref: "#/components/schemas/Error"
   /{courseId}/homework/{homeworkId}/file:
     get:
-      summary: "按照页码和每页数目获取某门课的课件列表"
+      summary: "按照页码和每页数目获取某门课的作业文件列表"
       operationId: get-file-list-for-homework
       tags:
         - course-homework
       parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+        - name: homeworkId
+          in: path
+          description: 作业 ID
+          required: true
+          schema:
+            type: string
         - name: itemCountOnOnePage
           in: query
           description: 一页返回的个数
@@ -307,11 +322,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-    post:
+    put:
       summary: "学生提交作业（覆盖原有作业）"
       operationId: handin-homework
       tags:
         - course
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+        - name: homeworkId
+          in: path
+          description: 作业 ID
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -369,6 +397,19 @@ paths:
       operationId: delete-homework
       tags:
         - course
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+        - name: homeworkId
+          in: path
+          description: 作业 ID
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: "OK - File is successfully deleted or there is no homework file for this student."
@@ -406,6 +447,25 @@ paths:
       operationId: get-file-for-course-homework
       tags:
         - course
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+        - name: homeworkId
+          in: path
+          description: 作业 ID
+          required: true
+          schema:
+            type: string
+        - name: homeworkFileId
+          in: path
+          description: 作业文件 ID
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: "OK - Successfully obtained homework file"
@@ -444,6 +504,25 @@ paths:
       operationId: get-file-score-for-course-homework
       tags:
         - course
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+        - name: homeworkId
+          in: path
+          description: 作业 ID
+          required: true
+          schema:
+            type: string
+        - name: homeworkFileId
+          in: path
+          description: 作业文件 ID
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: "OK - Successfully obtained homework score"
@@ -476,67 +555,45 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-    post:
+    put:
       summary: "根据文件登记分数"
       operationId: set-file-score-for-course-homework
       tags:
         - course
       parameters:
-        - name: homeworkFileScore
-          in: query
-          description: 该文件在本次作业中的分数
+        - name: courseId
+          in: path
+          description: 课程 ID
           required: true
           schema:
-            type: integer
-            format: int32
+            type: string
+        - name: homeworkId
+          in: path
+          description: 作业 ID
+          required: true
+          schema:
+            type: string
+        - name: homeworkFileId
+          in: path
+          description: 作业文件 ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/courseHomeworkFileScore'
       responses:
-        "201":
-          description: "Created - Successfully set homework score"
+        "200":
+          description: "Ok - Successfully altered homework score"
           content:
             application/json:
               schema:
                 type: object
                 $ref: "#/components/schemas/courseHomeworkFileScore"
-        "400":
-          description: "Bad Request"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/badRequest"
-        "403":
-          description: "Permission Denied - one of the following: provided user has no permission to access the homework, user is not a teacher and the file does not belong to him."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/permissionDenied"
-        "404":
-          description: "Not Found - course or file not found"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/notFound"
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-    put:
-      summary: "更改该文件在作业中对应的分数"
-      operationId: alter-file-score-for-course-homework
-      tags:
-        - course
-      parameters:
-        - name: homeworkFileScore
-          in: query
-          description: 该文件在本次作业中的分数
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        "200":
-          description: "Ok - Successfully altered homework score"
+        "201":
+          description: "Created - Successfully set homework score"
           content:
             application/json:
               schema:
