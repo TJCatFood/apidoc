@@ -7,13 +7,19 @@ servers:
   - url: "http://localhost:8000/api/v1/experiment-file-database"
 
 paths:
-  /experiment/{experimentId}:
+  /experiment/{experimentId}/files:
     get:
       summary: "按照页码和每页数目获取某实验的案例文件列表"
       operationId: get-file-list-for-experiment
       tags:
         - experiment
       parameters:
+        - name: experimentId
+          in: path
+          description: 实验课程 ID
+          required: true
+          schema:
+            type: string
         - name: itemCountOnOnePage
           in: query
           description: 一页返回的个数
@@ -61,21 +67,28 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /experiment/{experimentId}/file:
     post:
-      summary: "增加新的案例"
+      summary: "增加新的文件"
       operationId: add-new-file-for-experiment
       tags:
         - experiment
       parameters:
+        - name: experimentId
+          in: path
+          description: 实验课程 ID
+          required: true
+          schema:
+            type: string
         - name: fileDisplayName
           in: query
-          description: 用户希望的案例文件名（显示）
+          description: 用户希望的文件名（显示）
           required: true
           schema:
             type: string
         - name: fileComment
           in: query
-          description: 案例文件注释
+          description: 文件注释
           required: true
           schema:
             type: string
@@ -126,10 +139,17 @@ paths:
                 $ref: "#/components/schemas/Error"
   /experiment/{experimentId}/count:
     get:
-      summary: "获取某实验共有多少案例文件"
+      summary: "获取某实验课程共有多少文件"
       operationId: get-file-list-for-experiment
       tags:
         - experiment
+      parameters:
+        - name: experimentId
+          in: path
+          description: 实验 ID
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: "OK - Successfully obtained the count of files from currrent experiment"
@@ -162,12 +182,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /experiment/{experimentId}/{fileId}:
+  /experiment/{experimentId}/file/{fileId}:
     get:
-      summary: "获取案例文件"
+      summary: "获取文件"
       operationId: get-file-for-experiment
       tags:
         - experiment
+      parameters:
+        - name: experimentId
+          in: path
+          description: 实验课程 ID
+          required: true
+          schema:
+            type: string
+        - name: fileId
+          in: path
+          description: 文件 ID
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: "OK - Successfully obtained experiment file"
@@ -206,9 +239,21 @@ paths:
       tags:
         - experiment
       parameters:
+        - name: experimentId
+          in: path
+          description: 实验课程 ID
+          required: true
+          schema:
+            type: string
+        - name: fileId
+          in: path
+          description: 文件 ID
+          required: true
+          schema:
+            type: string
         - name: fileComment
           in: query
-          description: 案例文件注释
+          description: 实验课程文件注释
           required: true
           schema:
             type: string
@@ -245,10 +290,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     delete:
-      summary: "删除该案例文件资源"
+      summary: "删除该实验课程文件资源"
       operationId: delete-file
       tags:
         - experiment
+      parameters:
+        - name: experimentId
+          in: path
+          description: 实验课程 ID
+          required: true
+          schema:
+            type: string
+        - name: fileId
+          in: path
+          description: 文件 ID
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: "OK - File is successfully deleted"
