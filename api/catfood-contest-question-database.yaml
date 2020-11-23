@@ -1,0 +1,357 @@
+openapi: 3.0.0
+info:
+  version: 0.0.1
+  title: catfood-contest-question-database
+  description: 课程资料库（对抗练习题库）模块 API
+servers:
+  - url: "http://localhost:8000/api/v1/contest-question-database"
+
+paths:
+  /questions:
+    get:
+      summary: '老师按照页码和每页数目查看题库内的所有题目列表'
+      operationId: get-questions
+      tags:
+        - question
+      parameters:
+        - name: itemCountOnOnePage
+          in: query
+          description: 一页返回的个数
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: pageIndex
+          in: query
+          description: 页码
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'OK - Successfully obtained question list'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/questions'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /question/{questionType}/{questionId}: 
+    get:
+      summary: '老师查看题库中某一题目的详情'
+      operationId: get-question-questionType-questionId
+      tags:
+        - question
+      parameters:
+        - name: questionType
+          in: path
+          description: 获取的题目类型（ 0 为单选， 1 为多选）
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: questionId
+          in: path
+          description: 获取的题目 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'OK - Successfully obtained question'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/question'
+        '400':
+          description: 'Bad Request - Invalid question ID or question type supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - question not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: '老师增加题库中的题目'
+      operationId: put-question-questionType-questionId
+      tags:
+        - question
+      parameters:
+        - name: questionType
+          in: path
+          description: 修改的题目类型（ 0 为单选， 1 为多选）
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: questionId
+          in: path
+          description: 修改的题目 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/putQuestion'
+      responses:
+        '200':
+          description: 'OK - question changed'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:            
+                  question:
+                    type: object
+                    $ref: '#/components/schemas/question' 
+        '400':
+          description: 'Bad Request - Invalid question ID or type or user ID supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - question or user not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: '老师删除题库中的题目'
+      operationId: delete-question-questionType-questionId
+      tags:
+        - question
+      parameters:
+        - name: questionType
+          in: path
+          description: 修改的题目类型（ 0 为单选， 1 为多选）
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: questionId
+          in: path
+          description: 修改的题目 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: userId
+          in: query
+          description: 操作者 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'OK - question deleted'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:            
+                  question:
+                    type: object
+                    $ref: '#/components/schemas/question' 
+        '400':
+          description: Bad Request - Invalid question ID or type or user ID supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - question not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /question:
+    post:
+      summary: '老师增加题库中的题目'
+      operationId: post-question-userId
+      tags:
+        - question
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contest:
+                  $ref: '#/components/schemas/postQuestion'
+      responses:
+        '201':
+          description: 'OK - question created'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:            
+                  question:
+                    type: object
+                    $ref: '#/components/schemas/question' 
+        '400':
+          description: 'Bad Request - Invalid user ID or question type supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    postQuestion:
+      type: object
+      required:
+        - userId
+        - questionType
+        - questionChapter
+        - questionContent
+        - questionAnswer
+        - questionChoiceAContent
+        - questionChoiceBContent
+      properties:
+        userId:
+          type: integer
+          format: int32
+        questionType:
+          type: integer
+          format: int32
+        questionChapter:
+          type: integer
+          format: int32
+        questionContent:
+          type: string
+        questionAnswer:
+          type: string
+        questionChoiceAContent:
+          type: string
+        questionChoiceBContent:
+          type: string
+        questionChoiceCContent:
+          type: string
+        questionChoiceDContent:
+          type: string
+    putQuestion:
+      type: object
+      required:
+        - userId
+        - questionChapter
+        - questionContent
+        - questionAnswer
+        - questionChoiceAContent
+        - questionChoiceBContent
+      properties:
+        userId:
+          type: integer
+          format: int32
+        questionChapter:
+          type: integer
+          format: int32
+        questionContent:
+          type: string
+        questionAnswer:
+          type: string
+        questionChoiceAContent:
+          type: string
+        questionChoiceBContent:
+          type: string
+        questionChoiceCContent:
+          type: string
+        questionChoiceDContent:
+          type: string
+    ok:
+      title: OK
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    badRequest:
+      title: Bad Request
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    permissionDenied:
+      title: Permission Denied
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    notFound:
+      title: Not Found
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    conflict:
+      title: Conflict
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
