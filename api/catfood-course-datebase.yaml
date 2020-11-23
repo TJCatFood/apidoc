@@ -93,8 +93,7 @@ paths:
             application/json:
               schema:
                 type: object
-                items:
-                  $ref: "#/components/schemas/courseFile"
+                $ref: "#/components/schemas/courseFile"
         "400":
           description: "Bad Request"
           content:
@@ -138,8 +137,7 @@ paths:
             application/json:
               schema:
                 type: object
-                items:
-                  $ref: "#/components/schemas/courseFileCount"
+                $ref: "#/components/schemas/courseFileCount"
         "400":
           description: "Bad Request"
           content:
@@ -221,8 +219,7 @@ paths:
             application/json:
               schema:
                 type: object
-                items:
-                  $ref: "#/components/schemas/courseFile"
+                $ref: "#/components/schemas/courseFile"
         "400":
           description: "Bad Request"
           content:
