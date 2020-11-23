@@ -37,12 +37,75 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/questions'
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the question database"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - experiment or file not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
+  /questions/count:
+    get:
+      summary: "获取题库中题目数量"
+      operationId: get-question-count
+      tags:
+        - experiment
+      parameters:
+        - name: experimentId
+          in: path
+          description: 实验 ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "OK - Successfully obtained the count of files from currrent experiment"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/experimentFileCount"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the question database"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - experiment or file not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /question/{questionType}/{questionId}: 
     get:
       summary: '老师查看题库中某一题目的详情'
@@ -79,6 +142,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/badRequest'
+        "403":
+          description: "Permission Denied - provided user has no permission to access the question database"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
         '404':
           description: 'Not Found - question not found'
           content:
@@ -133,6 +202,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/badRequest'
+        "403":
+          description: "Permission Denied - provided user has no permission to access the question database"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
         '404':
           description: 'Not Found - question or user not found'
           content:
@@ -189,6 +264,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/badRequest'
+        "403":
+          description: "Permission Denied - provided user has no permission to access the question database"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
         '404':
           description: 'Not Found - question not found'
           content:
@@ -232,6 +313,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/badRequest'
+        "403":
+          description: "Permission Denied - provided user has no permission to access the question database"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
         default:
           description: Unexpected error
           content:
