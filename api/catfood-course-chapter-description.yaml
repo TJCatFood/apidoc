@@ -1,0 +1,350 @@
+openapi: 3.0.0
+info:
+  version: 0.0.1
+  title: catfood-course-chapter-description
+  description: 理论课程小节信息 API
+servers:
+  - url: "http://localhost:8000/api/v1/course-chapter-description"
+
+paths:
+  /{courseId}/chapter:
+    get:
+      summary: "按照页码和每页数目获取某门课程下的小节信息列表"
+      operationId: get-chapter-description-list-within-course
+      tags:
+        - course-chapter-description
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+        - name: itemCountOnOnePage
+          in: query
+          description: 一页返回的个数
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: pageIndex
+          in: query
+          description: 页码
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/courseChapterDescription"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the course"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - course not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: "按照小节 ID 增加该小节详细信息"
+      operationId: set-chapter-description-within-course
+      tags:
+        - course-chapter-description
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/courseChapterDescription'
+      responses:
+        "201":
+          description: "Created - Successfully created new chapter description"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/courseChapterDescription"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the course"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - course not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /{courseId}/chapter/{id}:
+    get:
+      summary: "按小节 ID 获取某门课程下的某个小节的信息"
+      operationId: get-chapter-description-within-course
+      tags:
+        - course-chapter-description
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: 章节 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/courseChapterDescription"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the course"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - course not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: "按照小节 ID 修改该小节详细信息，只会更改 courseChapterTitle 和 courseChapterMoocLink"
+      operationId: alter-chapter-description-within-course
+      tags:
+        - course-chapter-description
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: 章节 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/courseChapterDescription'
+      responses:
+        "200":
+          description: "OK - Successfully altered new chapter description"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/courseChapterDescription"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to write to the course"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - course not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: "按照小节 ID 删除该小节详细信息"
+      operationId: delete-chapter-description-within-course
+      tags:
+        - course-chapter-description
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: 章节 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/ok"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the course"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - course not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+
+components:
+  schemas:
+    courseChapterDescription:
+      type: object
+      required:
+        - courseChapterId
+        - courseChapterTitle
+        - courseChapterMoocLink
+      properties:
+        courseChapterId:
+          type: integer
+          format: int32
+        courseChapterTitle:
+          type: string
+        courseChapterMoocLink:
+          type: string
+    ok:
+      title: OK
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    badRequest:
+      title: Bad Request
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    permissionDenied:
+      title: Permission Denied
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    notFound:
+      title: Not Found
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    conflict:
+      title: Conflict
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
