@@ -79,13 +79,13 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: string
-              format: binary
+        - name: homeworkEndTime
+          in: query
+          description: 作业截止时间
+          required: true
+          schema:
+            type: string
+            format: date-time
       responses:
         "201":
           description: "Created - Successfully created new homework"
@@ -93,8 +93,7 @@ paths:
             application/json:
               schema:
                 type: object
-                items:
-                  $ref: "#/components/schemas/courseHomework"
+                $ref: "#/components/schemas/courseHomework"
         "400":
           description: "Bad Request"
           content:
@@ -176,13 +175,13 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: string
-              format: binary
+        - name: homeworkEndTime
+          in: query
+          description: 作业截止时间
+          required: true
+          schema:
+            type: string
+            format: date-time
       responses:
         "200":
           description: "OK - Course homework details is successfullt altered"
@@ -216,7 +215,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-    
+  /{courseId}/homework/{homeworkId}/count:
+    get:
+      summary: "获取当前该作业下已提交作业列表中共有多少作业文件"
+      operationId: get-file-list-for-course-homework
+      tags:
+        - course
+      responses:
+        "200":
+          description: "OK - Successfully obtained the count of files from currrent homework"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/courseHomeworkFileCount"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the course, or given homework is not within the course."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - course or file not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /{courseId}/homework/{homeworkId}/file:
     get:
       summary: "按照页码和每页数目获取某门课的课件列表"
@@ -290,16 +326,14 @@ paths:
             application/json:
               schema:
                 type: object
-                items:
-                  $ref: "#/components/schemas/courseHomeworkFile"
+                $ref: "#/components/schemas/courseHomeworkFile"
         "201":
           description: "Created - Successfully created new file"
           content:
             application/json:
               schema:
                 type: object
-                items:
-                  $ref: "#/components/schemas/courseHomeworkFile"
+                $ref: "#/components/schemas/courseHomeworkFile"
         "400":
           description: "Bad Request"
           content:
@@ -307,7 +341,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/badRequest"
         "403":
-          description: "Permission Denied - provided user has no permission to access the course, or given homework is not within the course."
+          description: "Permission Denied - one of the following: provided user has no permission to access the course, given homework is not within the course, user and homework don't match each other or homework is no longer available for handin."
           content:
             application/json:
               schema:
@@ -330,21 +364,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /course/{courseId}/count:
-    get:
-      summary: "获取某门课共有多少课件"
-      operationId: get-file-list-for-course
+    delete:
+      summary: "删除该学生这次作业的提交"
+      operationId: delete-homework
       tags:
         - course
       responses:
         "200":
-          description: "OK - Successfully obtained the count of files from currrent course"
+          description: "OK - File is successfully deleted or there is no homework file for this student."
           content:
             application/json:
               schema:
-                type: object
-                items:
-                  $ref: "#/components/schemas/courseFileCount"
+                $ref: "#/components/schemas/ok"
         "400":
           description: "Bad Request"
           content:
@@ -352,7 +383,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/badRequest"
         "403":
-          description: "Permission Denied - provided user has no permission to access the course, or given homework is not within the course."
+          description: "Permission Denied - one of the following: provided user has no permission to access the course, given homework is not within the course, user and homework don't match each other or homework is no longer available for handin."
           content:
             application/json:
               schema:
@@ -369,15 +400,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /course/{courseId}/{fileId}:
+  /{courseId}/homework/{homeworkId}/file/{homeworkFileId}:
     get:
       summary: "获取文件"
-      operationId: get-file-for-course
+      operationId: get-file-for-course-homework
       tags:
         - course
       responses:
         "200":
-          description: "OK - Successfully obtained course file"
+          description: "OK - Successfully obtained homework file"
           content:
             application/octet-stream:
               schema:
@@ -390,7 +421,90 @@ paths:
               schema:
                 $ref: "#/components/schemas/badRequest"
         "403":
-          description: "Permission Denied - provided user has no permission to access the course, or given homework is not within the course."
+          description: "Permission Denied - one of the following: provided user has no permission to access the homework, user is not a teacher and the file does not belong to him."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - course or file not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /{courseId}/homework/{homeworkId}/file/{homeworkFileId}/score:
+    get:
+      summary: "获取分数"
+      operationId: get-file-score-for-course-homework
+      tags:
+        - course
+      responses:
+        "200":
+          description: "OK - Successfully obtained homework score"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/courseHomeworkFileScore"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - one of the following: provided user has no permission to access the homework, user is not a teacher and the file does not belong to him."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - course or file not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: "根据文件登记分数"
+      operationId: set-file-score-for-course-homework
+      tags:
+        - course
+      parameters:
+        - name: homeworkFileScore
+          in: query
+          description: 该文件在本次作业中的分数
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "201":
+          description: "Created - Successfully set homework score"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/courseHomeworkFileScore"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - one of the following: provided user has no permission to access the homework, user is not a teacher and the file does not belong to him."
           content:
             application/json:
               schema:
@@ -408,26 +522,26 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     put:
-      summary: "修改文件注释"
-      operationId: change-file-comments
+      summary: "更改该文件在作业中对应的分数"
+      operationId: alter-file-score-for-course-homework
       tags:
         - course
       parameters:
-        - name: fileComment
+        - name: homeworkFileScore
           in: query
-          description: 文件注释
+          description: 该文件在本次作业中的分数
           required: true
           schema:
-            type: string
+            type: integer
+            format: int32
       responses:
         "200":
-          description: "OK - Successfully changed course file description"
+          description: "Ok - Successfully altered homework score"
           content:
             application/json:
               schema:
                 type: object
-                items:
-                  $ref: "#/components/schemas/courseFile"
+                $ref: "#/components/schemas/courseHomeworkFileScore"
         "400":
           description: "Bad Request"
           content:
@@ -435,7 +549,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/badRequest"
         "403":
-          description: "Permission Denied - provided user has no permission to access the course, or given homework is not within the course."
+          description: "Permission Denied - one of the following: provided user has no permission to access the homework, user is not a teacher and the file does not belong to him."
           content:
             application/json:
               schema:
@@ -452,74 +566,59 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-    delete:
-      summary: "删除该文件资源"
-      operationId: delete-file
-      tags:
-        - course
-      responses:
-        "200":
-          description: "OK - File is successfully deleted"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ok"
-        "400":
-          description: "Bad Request"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/badRequest"
-        "403":
-          description: "Permission Denied - provided user has no permission to access the course, or given homework is not within the course."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/permissionDenied"
-        "404":
-          description: "Not Found - course or file not found"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/notFound"
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-
 components:
   schemas:
-    courseFile:
+    courseHomework:
       type: object
       required:
-        - fileUuid
-        - fileDisplayName
-        - fileComments
-        - fileCreateTime
-        - fileUpdateTime
-        - fileCreatorId
-        - fileSize
+        - homeworkUuid
+        - homeworkTitle
+        - homeworkDescription
+        - homeworkCreateTime
+        - homeworkUpdateTime
+        - homeworkEndTime
+        - homeworkCreatorId
       properties:
-        fileUuid:
+        homeworkUuid:
           type: string
-        fileDisplayName:
+        homeworkTitle:
           type: string
-        fileComments:
+        homeworkDescription:
           type: string
-        fileCreateTime:
-          type: string
-          format: date-time
-        fileUpdateTime:
+        homeworkCreateTime:
           type: string
           format: date-time
-        fileCreatorId:
+        homeworkUpdateTime:
           type: string
-        fileSize:
+          format: date-time
+        homeworkEndTime:
+          type: string
+          format: date-time
+        homeworkCreatorId:
+          type: string
+    courseHomeworkFile:
+      type: object
+      required:
+        - homeworkFileUuid
+        - homeworkScore
+        - homeworkFileCreateTime
+        - homeworkFileCreatorId
+        - homeworkFileSize
+      properties:
+        homeworkFileUuid:
+          type: string
+        homeworkScore:
           type: integer
           format: int32
-    courseFileCount:
+        homeworkFileCreateTime:
+          type: string
+          format: date-time
+        homeworkFileCreatorId:
+          type: string
+        homeworkFileSize:
+          type: integer
+          format: int32
+    courseHomeworkFileCount:
       type: object
       required:
         - courseId
@@ -528,6 +627,20 @@ components:
         courseId:
           type: string
         courseFileCount:
+          type: integer
+          format: int32
+    courseHomeworkFileScore:
+      type: object
+      required:
+        - courseId
+        - homeworkId
+        - homeworkScore
+      properties:
+        courseId:
+          type: string
+        homeworkId:
+          type: string
+        homeworkScore:
           type: integer
           format: int32
     ok:
