@@ -1,0 +1,379 @@
+openapi: 3.0.0
+info:
+  version: 0.0.1
+  title: catfood-experiment-file-databse
+  description: 课程资料库（实验案例存储）模块 API
+servers:
+  - url: "http://localhost:8000/api/v1/experiment-file-database"
+
+paths:
+  /experiment/{experimentId}:
+    get:
+      summary: "按照页码和每页数目获取某实验的案例文件列表"
+      operationId: get-file-list-for-experiment
+      tags:
+        - experiment
+      parameters:
+        - name: itemCountOnOnePage
+          in: query
+          description: 一页返回的个数
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: pageIndex
+          in: query
+          description: 页码
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "OK - Successfully obtained experiment file list"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/experimentFile"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the experiment"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - experiment not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: "增加新的案例"
+      operationId: add-new-file-for-experiment
+      tags:
+        - experiment
+      parameters:
+        - name: fileDisplayName
+          in: query
+          description: 用户希望的案例文件名（显示）
+          required: true
+          schema:
+            type: string
+        - name: fileComment
+          in: query
+          description: 案例文件注释
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "201":
+          description: "Created - Successfully created new file"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/experimentFile"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the experiment"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - experiment not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        "409":
+          description: "Conflict - two same file in one experiment"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/conflict"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /experiment/{experimentId}/count:
+    get:
+      summary: "获取某实验共有多少案例文件"
+      operationId: get-file-list-for-experiment
+      tags:
+        - experiment
+      responses:
+        "200":
+          description: "OK - Successfully obtained the count of files from currrent experiment"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/experimentFileCount"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the experiment"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - experiment or file not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /experiment/{experimentId}/{fileId}:
+    get:
+      summary: "获取案例文件"
+      operationId: get-file-for-experiment
+      tags:
+        - experiment
+      responses:
+        "200":
+          description: "OK - Successfully obtained experiment file"
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the experiment"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - experiment or file not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: "修改案例文件注释"
+      operationId: change-file-comments
+      tags:
+        - experiment
+      parameters:
+        - name: fileComment
+          in: query
+          description: 案例文件注释
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "OK - Successfully changed experiment file description"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/experimentFile"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the experiment"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - experiment or file not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: "删除该案例文件资源"
+      operationId: delete-file
+      tags:
+        - experiment
+      responses:
+        "200":
+          description: "OK - File is successfully deleted"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ok"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the experiment"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - experiment or file not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    experimentFile:
+      type: object
+      required:
+        - fileUuid
+        - fileDisplayName
+        - fileComments
+        - fileCreateTime
+        - fileUpdateTime
+        - fileCreatorId
+        - fileSize
+      properties:
+        fileUuid:
+          type: string
+        fileDisplayName:
+          type: string
+        fileComments:
+          type: string
+        fileCreateTime:
+          type: string
+          format: date-time
+        fileUpdateTime:
+          type: string
+          format: date-time
+        fileCreatorId:
+          type: string
+        fileSize:
+          type: integer
+          format: int32
+    experimentFileCount:
+      type: object
+      required:
+        - experimentId
+        - experimentFileCount
+      properties:
+        experimentId:
+          type: string
+        experimentFileCount:
+          type: integer
+          format: int32
+    ok:
+      title: OK
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    badRequest:
+      title: Bad Request
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    permissionDenied:
+      title: Permission Denied
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    notFound:
+      title: Not Found
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    conflict:
+      title: Conflict
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
