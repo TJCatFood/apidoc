@@ -4,7 +4,7 @@ info:
   title: catfood-user
   description: 用户管理模块 API
 servers:
-  - url: 'http://localhost:8000/api/v1/'
+  - url: 'http://localhost:8000/api/v1/user'
 paths:
   /login:
     post:
@@ -39,7 +39,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/login'
         '400':
-          description: 'Bad Request - Invalid user ID'
+          description: 'Bad Request - Invalid user ID or userToken'
           content:
             application/json:
               schema:
@@ -83,95 +83,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/invite'
-        '400':
-          description: 'Bad Request - Invalid user ID or course ID supplied'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/badRequest'
-        '404':
-          description: 'Not Found'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/notFound'
-        '500':
-          description: 'Internal Server Error'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /proportion:
-    post:
-      summary: '设置某门课程的成绩比重'
-      operationId: post-set-proportion
-      tags:
-        - Grade
-      parameters:
-        - name: teacherID
-          in: query
-          description: 教师 ID
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: classID
-          in: query
-          description: 被修改的课程 ID
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: assignment
-          in: query
-          description: 作业比重
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: exam1
-          in: query
-          description: 考试1比重
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: exam2
-          in: query
-          description: 考试2比重
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: experiment
-          in: query
-          description: 实验比重
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: contest
-          in: query
-          description: 对抗比重
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: attendance
-          in: query
-          description: 考勤比重
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: 'OK - Successfully updated grade proportion'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/set-proportion'
+                $ref: '#/components/schemas/accepted'
         '400':
           description: 'Bad Request - Invalid user ID or course ID supplied'
           content:
@@ -259,7 +171,7 @@ paths:
             type: string
       responses:
         '200':
-          description: 'OK - Successfully obtained course list'
+          description: 'OK - Successfully obtained grade weights'
           content:
             application/json:
               schema:
@@ -288,61 +200,20 @@ paths:
       tags:
         - Grade
       parameters:
-        - name: courseID
-          in: query 
-          description: 查询的课程 ID
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: weightAssignment
-          in: query
-          description: 课程成绩中作业所占的权重
-          required: true
-          schema:
-            type: number
-            format: float
-        - name: weightExam1
-          in: query
-          description: 课程成绩中第一次测试所占的权重
-          required: true
-          schema:
-            type: number
-            format: float
-        - name: weightExam2
-          in: query
-          description: 课程成绩中第二次测试所占的权重
-          required: true
-          schema:
-            type: number
-            format: float
-        - name: weightExperiment
-          in: query
-          description: 课程成绩中实验所占的权重
-          required: true
-          schema:
-            type: number
-            format: float
-        - name: weightCombat
-          in: query
-          description: 课程成绩中对抗练习所占的权重
-          required: true
-          schema:
-            type: number
-            format: float
-        - name: weightAttendance
-          in: query
-          description: 课程成绩中出勤所占的权重
-          required: true
-          schema:
-            type: number
-            format: float
         - name: userToken
           in: cookie
           description: 用于鉴权的用户Token
           required: true
           schema:
             type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: 
+                invitation: 
+                  $ref: '#/components/schemas/postProportion'            
       responses:
         '200':
           description: 'OK - Successfully update grade weights'
@@ -358,6 +229,51 @@ paths:
                 $ref: '#/components/schemas/badRequest'
         '404':
           description: 'Not Found - grade weights not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        '500':
+          description: 'Internal Server Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: '设置某门课程的给分权重'
+      operationId: post-set-proportion
+      tags:
+        - Grade
+      parameters:
+      - name: userToken
+        in: cookie
+        description: '用于鉴权的用户Token'
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: 
+                invitation: 
+                  $ref: '#/components/schemas/postProportion'            
+      responses:
+        '200':
+          description: 'OK - Successfully updated grade proportion'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/accepted'
+        '400':
+          description: 'Bad Request - Invalid user ID or course ID supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found'
           content:
             application/json:
               schema:
@@ -557,7 +473,7 @@ paths:
             format: int32
       responses:
         '200':
-          description: 'OK - 成功获取班内学生成绩'
+          description: 'OK - Successfully Obtained Student Grades'
           content:
             application/json:
               schema:
@@ -630,39 +546,41 @@ components:
       type: object
       required:
         - courseID
-        - timeStamp
         - weightAssignment
         - weightExam1
         - weightExam2
         - weightExperiment
         - weightCombat
         - weightAttendance
-
       properties:
         courseID:
+          description: 课程 ID
           type: integer
-          format: int64
-        timeStamp:
-          type: string
-          format: date-time
+          format: int32    
         weightAssignment:
+          description: 课程成绩中作业所占的权重
           type: number
           format: float
         weightExam1:
+          description: 课程成绩中第一次测试所占的权重
           type: number
           format: float
         weightExam2:
+          description: 课程成绩中第二次测试所占的权重
           type: number
           format: float
         weightExperiment:
+          description: 课程成绩中实验所占的权重
           type: number
           format: float
         weightCombat:
+          description: 课程成绩中对抗练习所占的权重
           type: number
           format: float
-        weightAttendance: 
+        weightAttendance:
+          description: 课程成绩中出勤所占的权重
           type: number
-          format: float
+          format: float  
 
     updateAccount:
       type: object
@@ -763,16 +681,50 @@ components:
         totalPoint:
           type: integer
           format: int32 
-    set-proportion:
+    postProportion:
       type: object
+      required:
+        - teacherID
+        - courseID
+        - weightAssignment
+        - weightExam1
+        - weightExam2
+        - weightExperiment
+        - weightCombat
+        - weightAttendance
       properties:
-        message:
-          type: string
-    invite:
-      type: object
-      properties:
-        message:
-          type: string
+        teacherID:
+          description: 教师 ID
+          type: integer
+          format: int32
+        courseID:
+          description: 被修改的课程 ID
+          type: integer
+          format: int32    
+        weightAssignment:
+          description: 课程成绩中作业所占的权重
+          type: number
+          format: float
+        weightExam1:
+          description: 课程成绩中第一次测试所占的权重
+          type: number
+          format: float
+        weightExam2:
+          description: 课程成绩中第二次测试所占的权重
+          type: number
+          format: float
+        weightExperiment:
+          description: 课程成绩中实验所占的权重
+          type: number
+          format: float
+        weightCombat:
+          description: 课程成绩中对抗练习所占的权重
+          type: number
+          format: float
+        weightAttendance:
+          description: 课程成绩中出勤所占的权重
+          type: number
+          format: float                                                     
     invitation:
       type: object
       required:
@@ -826,6 +778,12 @@ components:
           type: string
         userToken:
           type: string
+    accepted:
+      title: Accepted
+      type: object
+      properties:
+        message:
+          type: string          
     badRequest:
       title: Bad Request
       type: object
