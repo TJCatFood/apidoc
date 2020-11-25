@@ -49,12 +49,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/permissionDenied"
-        "404":
-          description: "Not Found - experiment or file not found"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/notFound"
         default:
           description: Unexpected error
           content:
@@ -66,17 +60,10 @@ paths:
       summary: "获取题库中题目数量"
       operationId: get-question-count
       tags:
-        - experiment
-      parameters:
-        - name: experimentId
-          in: path
-          description: 实验 ID
-          required: true
-          schema:
-            type: string
+        - question
       responses:
         "200":
-          description: "OK - Successfully obtained the count of files from currrent experiment"
+          description: "OK - Successfully obtained the count of questions from currrent question database"
           content:
             application/json:
               schema:
@@ -94,12 +81,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/permissionDenied"
-        "404":
-          description: "Not Found - experiment or file not found"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/notFound"
         default:
           description: Unexpected error
           content:
