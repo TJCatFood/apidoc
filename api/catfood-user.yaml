@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: 0.0.1
+  version: 0.1.0
   title: catfood-user
   description: 用户管理模块 API
 servers:
@@ -37,102 +37,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/login'
+                properties:
+                  isSuccess:
+                    type: boolean
+                    default: true
+                  data:
+                    $ref: '#/components/schemas/accountMessage'
         '400':
           description: 'Bad Request - Invalid user ID or userToken'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/badRequest'
-        '404':
-          description: 'Not Found'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/notFound'
-        '500':
-          description: 'Internal Server Error'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /invitation:
-    post:
-      summary: '邀请某个教师或者助教加入到课程教学活动中'
-      operationId: post-invite
-      tags:
-        - Course
-      parameters:
-      - name: userToken
-        in: cookie
-        description: '用于鉴权的用户Token'
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: 
-                invitation: 
-                  $ref: '#/components/schemas/invitation'
-      responses:
-        '200':
-          description: 'OK - Successfully send the invite message'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/accepted'
-        '400':
-          description: 'Bad Request - Invalid user ID or course ID supplied'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/badRequest'
-        '404':
-          description: 'Not Found'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/notFound'
-        '500':
-          description: 'Internal Server Error'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /courses:
-    get:
-      summary: '获取当前用户参与的所有课程'
-      operationId: get-courses
-      tags:
-        - Course
-      parameters:
-        - name: userToken
-          in: cookie
-          description: '用于鉴权的用户Token'
-          required: true
-          schema:
-            type: string
-        - name: userID
-          in: query
-          description: 查询的用户 ID
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: 'OK - Successfully obtained course list'
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/course'
-        '400':
-          description: 'Bad Request - Invalid user ID supplied'
           content:
             application/json:
               schema:
@@ -175,7 +87,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/gradeWeight'
+                properties:
+                  isSuccess:
+                    type: boolean
+                    default: true
+                  data:
+                   $ref: '#/components/schemas/gradeWeight'
         '400':
           description: 'Bad Request - Invalid course ID supplied'
           content:
@@ -194,8 +111,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    patch:
-      summary: '更新某门课程的给分权重'
+    put:
+      summary: '设置某门课程的给分权重'
       operationId: update-courses-grade-weights
       tags:
         - Grade
@@ -211,16 +128,19 @@ paths:
           application/json:
             schema:
               type: object
-              properties: 
-                invitation: 
-                  $ref: '#/components/schemas/postProportion'            
+              properties:
+                teacherID:
+                  type: integer
+                  format: int32 
+                proportion: 
+                  $ref: '#/components/schemas/gradeWeight'            
       responses:
         '200':
           description: 'OK - Successfully update grade weights'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/gradeWeight'
+                $ref: '#/components/schemas/accepted'
         '400':
           description: 'Bad Request - Invalid value supplied'
           content:
@@ -229,51 +149,6 @@ paths:
                 $ref: '#/components/schemas/badRequest'
         '404':
           description: 'Not Found - grade weights not found'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/notFound'
-        '500':
-          description: 'Internal Server Error'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-    post:
-      summary: '设置某门课程的给分权重'
-      operationId: post-set-proportion
-      tags:
-        - Grade
-      parameters:
-      - name: userToken
-        in: cookie
-        description: '用于鉴权的用户Token'
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: 
-                invitation: 
-                  $ref: '#/components/schemas/postProportion'            
-      responses:
-        '200':
-          description: 'OK - Successfully updated grade proportion'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/accepted'
-        '400':
-          description: 'Bad Request - Invalid user ID or course ID supplied'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/badRequest'
-        '404':
-          description: 'Not Found'
           content:
             application/json:
               schema:
@@ -317,7 +192,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/grade'
+                properties:
+                  isSuccess:
+                    type: boolean
+                    default: true
+                  data:
+                    $ref: '#/components/schemas/grade'
         '400':
           description: 'Bad Request - Invalid user ID or course ID supplied'
           content:
@@ -336,6 +216,76 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /grades/bonus:
+    put:
+      summary: '设定学生额外加分'
+      operationId: set-bonus
+      tags:
+        - Grade
+      parameters:
+        - name: userToken
+          in: cookie
+          description: '用于鉴权的用户Token'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - teacherID
+                - courseID
+              properties:
+                teacherID:
+                  description: 进行操作的教师 ID
+                  type: integer
+                  format: int32 
+                courseID:
+                  description: 课程 ID
+                  type: integer
+                  format: int32
+                students:
+                  description: 待设定加分的若干学生
+                  type: array
+                  items:
+                    properties: 
+                      studentID: 
+                        description: 学生 ID
+                        type: integer
+                        format: int32                                 
+                      bonus: 
+                        description: 加分值
+                        type: number
+                        format: float
+      responses:
+        '200':
+          description: 'OK - Successfully Set Bonus'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/accepted'
+        '400':
+          description: 'Bad Request - Invalid user ID or course ID supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - Student or Course not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        '500':
+          description: 'Internal Server Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /register:
     post:
       summary: '教师或助教注册'
@@ -345,18 +295,15 @@ paths:
       requestBody:
         content:
           application/json:
-            schema:
-              type: object
-              properties: 
-                account: 
-                  $ref: '#/components/schemas/account'
+            schema: 
+              $ref: '#/components/schemas/account'
       responses:
         '201':
           description: 'OK - Registeration Success'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/account' 
+                $ref: '#/components/schemas/accepted' 
         '400':
           description: 'Bad Request - Illformed Username or Email'
           content:
@@ -370,6 +317,55 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
   /account:
+    get:
+      summary: '查看账户信息'
+      operationId: get-account
+      tags:
+        - Account
+      parameters:
+      - name: userToken
+        in: cookie
+        description: '用于鉴权的用户Token'
+        required: true
+        schema:
+          type: string
+      - name: userID
+        in: query
+        description: '当前账户 ID'
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '201':
+          description: 'OK - Get Account Message Success'
+          content:
+            application/json:
+              schema:
+                properties:
+                  isSuccess:
+                    type: boolean
+                    default: true
+                  data:
+                    $ref: '#/components/schemas/accountMessage' 
+        '400':
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - User Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'                
+        '500':
+          description: 'Interal Server Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     patch:
       summary: '更新账户信息'
       operationId: update-account
@@ -386,14 +382,33 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/updateAccount'
+              required: 
+                - userID
+              properties:
+                userID:
+                  description: 要更新信息的账户 ID
+                  type: integer
+                  format: int32        
+                email:
+                  description: 更新后的邮箱
+                  type: string
+                  format: email
+                avatar:
+                  description: 更新后的头像
+                  type: string
+                  format: url 
       responses:
         '201':
           description: 'OK - Account Update Success'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/account' 
+                properties:
+                  isSuccess:
+                    type: boolean
+                    default: true
+                  data:
+                    $ref: '#/components/schemas/accountMessage' 
         '400':
           description: 'Bad Request - Illformed Email'
           content:
@@ -412,6 +427,64 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /account/password:
+    patch:
+      summary: '修改账户密码'
+      operationId: update-password
+      tags:
+        - Account
+      parameters:
+      - name: userToken
+        in: cookie
+        description: '用于鉴权的用户Token'
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required: 
+                - userID 
+                - previousPasswordDigest
+                - newPasswordDigest
+              properties:
+                userID:
+                  description: 要修改密码的账户 ID
+                  type: integer
+                  format: int32
+                previousPasswordDigest:
+                  description: 原先密码的摘要值
+                  type: string
+                newPasswordDigest:
+                  description: 修改后密码的摘要值
+                  type: string
+      responses:
+        '201':
+          description: 'OK - Password Update Success'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/accepted' 
+        '400':
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - User Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'                
+        '500':
+          description: 'Interal Server Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'    
   /accounts:
     post:
       summary: '导入学生账户'
@@ -438,7 +511,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/account' 
+                $ref: '#/components/schemas/accepted' 
         '400':
           description: 'Bad Request - Illformed Username or Email'
           content:
@@ -479,7 +552,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  grades:
+                  isSuccess:
+                    type: boolean
+                    default: true
+                  data:
                     type: array
                     items:
                       $ref: '#/components/schemas/grade'
@@ -498,51 +574,8 @@ paths:
 
 components:
   schemas:
-    course:
-      type: object
-      required:
-        - courseID
-        - isActive
-        - timeStamp
-        - course_creator_school
-        - course_name
-        - course_description
-        - course_credit
-        - course_study_time_needed
-        - course_type
-        - course_start_timestamp
-        - course_end_timestamp
-      properties:
-        courseID:
-          type: integer
-          format: int64
-        isActive:
-          type: boolean
-        timeStamp:
-          type: string
-          format: date-time
-        course_creator_school:
-          type: integer
-          format: int64
-        course_name:
-          type: string
-        course_description: 
-          type: string
-        course_credit: 
-          type: integer
-          format: int64
-        course_study_time_needed:
-          type: integer
-          format: int64  
-        course_type:
-          type: boolean
-        course_start_timestamp:
-          type: string
-          format: date-time  
-        course_end_timestamp:
-          type: string
-          format: date-time
     gradeWeight:
+      title: Grade Weight
       type: object
       required:
         - courseID
@@ -580,71 +613,54 @@ components:
         weightAttendance:
           description: 课程成绩中出勤所占的权重
           type: number
-          format: float  
+          format: float
 
-    updateAccount:
-      type: object
-      required: 
-        - userID 
-        - previousPasswordDigest  
-      properties:
-        userID:
-          type: integer
-          format: int32
-        previousPasswordDigest:
-          type: string
-        newPasswordDigest:
-          type: string          
-        realname:
-          type: string
-        email:
-          type: string
-          format: email
-        universityID:
-          type: integer
-          format: int32
-        schoolID:
-          type: integer
-          format: int32
-        school_id_number:
-          type: string
-        avatar:
-          type: string
-          format: url   
     account:
+      title: Account
       type: object
       required: 
         - userID
         - passwordDigest
         - universityID
         - schoolID
-        - school_id_number     
+        - personalID    
       properties:
         userID:
+          description: 账户 ID
           type: integer
           format: int32
         passwordDigest:
+          description: 密码摘要值
           type: string
         realname:
+          description: 用户姓名
           type: string
         email:
+          description: 用户邮箱
           type: string
           format: email
         universityID:
+          description: 用户所在大学的 ID
           type: integer
           format: int32
         schoolID:
+          description: 用户所在学院的 ID
           type: integer
           format: int32
         character:
+          description: 用户角色
           type: integer
           format: int32
-        school_id_number:
+        personalID:
+          description: 用户学工号
           type: string
         avatar:
+          description: 用户头像
           type: string
           format: url
+
     grade:
+      title: Grade
       type: object
       required: 
         - courseID 
@@ -652,161 +668,142 @@ components:
         - totalPoint 
       properties:
         courseID:
+          description: 课程 ID
           type: integer
           format: int32
         studentID:
+          description: 学生 ID
           type: integer
           format: int32
         assignmentPoint:
+          description: 作业成绩
           type: integer
           format: int32          
         exam1Point:
+          description: 第一次测试成绩
           type: integer
           format: int32 
         exam2Point:
+          description: 第二次测试成绩
           type: integer
           format: int32 
         experimentPoint:
+          description: 实验成绩
           type: integer
           format: int32 
         combatPoint:
+          description: 对抗成绩
           type: integer
           format: int32 
         attendancePoint:
+          description: 出勤成绩
           type: integer
           format: int32 
         bonusPoint:
+          description: 额外加分
           type: integer
           format: int32   
         totalPoint:
+          description: 总分
           type: integer
           format: int32 
-    postProportion:
+                                                     
+    accountMessage:
+      title: Account Message
       type: object
       required:
-        - teacherID
-        - courseID
-        - weightAssignment
-        - weightExam1
-        - weightExam2
-        - weightExperiment
-        - weightCombat
-        - weightAttendance
-      properties:
-        teacherID:
-          description: 教师 ID
-          type: integer
-          format: int32
-        courseID:
-          description: 被修改的课程 ID
-          type: integer
-          format: int32    
-        weightAssignment:
-          description: 课程成绩中作业所占的权重
-          type: number
-          format: float
-        weightExam1:
-          description: 课程成绩中第一次测试所占的权重
-          type: number
-          format: float
-        weightExam2:
-          description: 课程成绩中第二次测试所占的权重
-          type: number
-          format: float
-        weightExperiment:
-          description: 课程成绩中实验所占的权重
-          type: number
-          format: float
-        weightCombat:
-          description: 课程成绩中对抗练习所占的权重
-          type: number
-          format: float
-        weightAttendance:
-          description: 课程成绩中出勤所占的权重
-          type: number
-          format: float                                                     
-    invitation:
-      type: object
-      required:
-        - invitorId
-        - courseId
-        - email
-        - inviteeName
-      properties:
-        invitorId:
-          description: 邀请者 ID
-          type: integer
-          format: int32
-        courseId:
-          description: 邀请加入的课程 ID
-          type: integer
-          format: int32
-        email:
-          description: 受邀者邮箱
-          type: string
-        inviteeName:
-          description: 受邀者备注 默认与邮箱相同
-          type: string    
-    login:
-      type: object
-      required:
+        - userID
         - realname
         - email
-        - universityId
-        - schoolId
+        - universityID
+        - schoolID
         - character
-        - schoolIDNumber
+        - personalID
         - avatar
         - userToken
       properties:
-        realname:
-          type: string
-        email:
-          type: string
-        universityId:
+        userID:
+          description: 账户 ID
           type: integer
           format: int32
-        schoold:
+        realname:
+          description: 用户姓名
+          type: string
+        email:
+          description: 用户邮箱
+          type: string
+          format: email
+        universityID:
+          description: 用户所在大学的 ID
+          type: integer
+          format: int32
+        schoolID:
+          description: 用户所在学院的 ID
           type: integer
           format: int32
         character:
+          description: 用户角色
           type: integer
           format: int32
-        schoolIDNumber:
+        personalID:
+          description: 用户学工号
           type: string
         avatar:
+          description: 用户头像
           type: string
+          format: url
         userToken:
+          description: 鉴权口令
           type: string
+
     accepted:
       title: Accepted
       type: object
       properties:
-        message:
-          type: string          
+        isSuccess:
+          type: boolean
+          default: true
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+
     badRequest:
       title: Bad Request
       type: object
       properties:
+        isSuccess:
+          type: boolean
+          default: false
         error:
           type: object
           properties:
             message:
               type: string
+
     notFound:
       title: Not Found
       type: object
       properties:
+        isSuccess:
+          type: boolean
+          default: false
         error:
           type: object
           properties:
             message:
               type: string
+
     Error:
+      title: Internal Error
       type: object
       required:
         - message
       properties:
+        isSuccess:
+          type: boolean
+          default: false
         error:
           type: object
           properties:
