@@ -205,7 +205,7 @@ paths:
                 $ref: '#/components/schemas/Error'
   /contest:
     get:
-      summary: '获取某门课程下的还未开始的比赛（一个或没有）'
+      summary: '获取某门课程下的还未开始的比赛（一个或没有'
       operationId: get-contest-courseId
       tags:
         - contest
@@ -223,7 +223,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/contest'
+                type: object
+                properties:
+                  contest:
+                    $ref: '#/components/schemas/contest'
+                  bIsParticipated:
+                    type: boolean
         '400':
           description: 'Bad Request - Invalid course ID supplied'
           content:
