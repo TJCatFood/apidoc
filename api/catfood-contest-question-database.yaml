@@ -81,7 +81,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: "#/components/schemas/experimentFileCount"
+                $ref: "#/components/schemas/questionCount"
         "400":
           description: "Bad Request"
           content:
@@ -327,6 +327,65 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    question:
+      type: object
+      required:
+        - questionId
+        - questionType
+        - questionChapter
+        - questionContent
+        - questionAnswer
+        - questionChoiceAContent
+        - questionChoiceBContent
+      properties:
+        questionId:
+          type: integer
+          format: int32
+        questionType:
+          type: integer
+          format: int32
+        questionChapter:
+          type: integer
+          format: int32
+        questionContent:
+          type: string
+        questionAnswer:
+          type: string
+        questionChoiceAContent:
+          type: string
+        questionChoiceBContent:
+          type: string
+        questionChoiceCContent:
+          type: string
+        questionChoiceDContent:
+          type: string
+    questions:
+      type: object
+      required:
+        - questionId
+        - questionType
+        - questionChapter
+        - questionContent
+      properties:
+        questionId:
+          type: integer
+          format: int32
+        questionType:
+          type: integer
+          format: int32
+        questionChapter:
+          type: integer
+          format: int32
+        questionContent:
+          type: string
+    questionCount:
+      type: object
+      required:
+        - questionCount
+      properties:
+        questionCount:
+          type: integer
+          format: int32
     postQuestion:
       type: object
       required:
