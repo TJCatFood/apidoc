@@ -114,9 +114,8 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/question'
+                type: object
+                $ref: '#/components/schemas/question'
         '400':
           description: 'Bad Request - Invalid question ID or question type supplied'
           content:
@@ -142,7 +141,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
     put:
-      summary: '老师增加题库中的题目'
+      summary: '老师修改题库中的题目'
       operationId: put-question-questionType-questionId
       tags:
         - question
@@ -221,13 +220,6 @@ paths:
           schema:
             type: integer
             format: int32
-        - name: userId
-          in: query
-          description: 操作者 ID
-          required: true
-          schema:
-            type: integer
-            format: int32
       responses:
         '200':
           description: 'OK - question deleted'
@@ -275,7 +267,7 @@ paths:
             schema:
               type: object
               properties:
-                contest:
+                question:
                   $ref: '#/components/schemas/postQuestion'
       responses:
         '201':
@@ -370,7 +362,6 @@ components:
     postQuestion:
       type: object
       required:
-        - userId
         - questionType
         - questionChapter
         - questionContent
@@ -378,9 +369,6 @@ components:
         - questionChoiceAContent
         - questionChoiceBContent
       properties:
-        userId:
-          type: integer
-          format: int32
         questionType:
           type: integer
           format: int32
@@ -402,16 +390,12 @@ components:
     putQuestion:
       type: object
       required:
-        - userId
         - questionChapter
         - questionContent
         - questionAnswer
         - questionChoiceAContent
         - questionChoiceBContent
       properties:
-        userId:
-          type: integer
-          format: int32
         questionChapter:
           type: integer
           format: int32
