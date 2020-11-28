@@ -34,9 +34,14 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/questions'
+                properties:            
+                  pagination:
+                    type: object
+                    $ref: "#/components/schemas/pagination"
+                  questions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/questions'
         "400":
           description: "Bad Request"
           content:
@@ -411,6 +416,22 @@ components:
           type: string
         questionChoiceDContent:
           type: string
+    pagination:
+      type: object
+      required:
+        - pageNum
+        - pageSize
+        - total
+      properties:
+        pageNum:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        total:
+          type: integer
+          format: int32
     ok:
       title: OK
       type: object
