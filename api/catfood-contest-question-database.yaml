@@ -9,19 +9,19 @@ servers:
 paths:
   /questions:
     get:
-      summary: '老师按照页码和每页数目查看题库内的所有题目列表'
+      summary: "老师按照页码和每页数目查看题库内的所有题目列表"
       operationId: get-questions
       tags:
         - question
       parameters:
-        - name: itemCountOnOnePage
+        - name: pageSize
           in: query
           description: 一页返回的个数
           required: false
           schema:
             type: integer
             format: int32
-        - name: pageIndex
+        - name: pageNum
           in: query
           description: 页码
           required: false
@@ -29,19 +29,19 @@ paths:
             type: integer
             format: int32
       responses:
-        '200':
-          description: 'OK - Successfully obtained question list'
+        "200":
+          description: "OK - Successfully obtained question list"
           content:
             application/json:
               schema:
-                properties:            
+                properties:
                   pagination:
                     type: object
                     $ref: "#/components/schemas/pagination"
                   questions:
                     type: array
                     items:
-                      $ref: '#/components/schemas/questions'
+                      $ref: "#/components/schemas/questions"
         "400":
           description: "Bad Request"
           content:
@@ -92,9 +92,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /question/{questionType}/{questionId}: 
+  /question/{questionType}/{questionId}:
     get:
-      summary: '老师查看题库中某一题目的详情'
+      summary: "老师查看题库中某一题目的详情"
       operationId: get-question-questionType-questionId
       tags:
         - question
@@ -114,39 +114,39 @@ paths:
             type: integer
             format: int32
       responses:
-        '200':
-          description: 'OK - Successfully obtained question'
+        "200":
+          description: "OK - Successfully obtained question"
           content:
             application/json:
               schema:
                 type: object
-                $ref: '#/components/schemas/question'
-        '400':
-          description: 'Bad Request - Invalid question ID or question type supplied'
+                $ref: "#/components/schemas/question"
+        "400":
+          description: "Bad Request - Invalid question ID or question type supplied"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/badRequest'
+                $ref: "#/components/schemas/badRequest"
         "403":
           description: "Permission Denied - provided user has no permission to access the question database"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/permissionDenied"
-        '404':
-          description: 'Not Found - question not found'
+        "404":
+          description: "Not Found - question not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/notFound'
+                $ref: "#/components/schemas/notFound"
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
     put:
-      summary: '老师修改题库中的题目'
+      summary: "老师修改题库中的题目"
       operationId: put-question-questionType-questionId
       tags:
         - question
@@ -169,44 +169,47 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/putQuestion'
+              type: object
+              properties:
+                question:
+                  $ref: "#/components/schemas/putQuestion"
       responses:
-        '200':
-          description: 'OK - question changed'
+        "200":
+          description: "OK - question changed"
           content:
             application/json:
               schema:
                 type: object
-                properties:            
+                properties:
                   question:
                     type: object
-                    $ref: '#/components/schemas/question' 
-        '400':
-          description: 'Bad Request - Invalid question ID or type or user ID supplied'
+                    $ref: "#/components/schemas/question"
+        "400":
+          description: "Bad Request - Invalid question ID or type or user ID supplied"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/badRequest'
+                $ref: "#/components/schemas/badRequest"
         "403":
           description: "Permission Denied - provided user has no permission to access the question database"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/permissionDenied"
-        '404':
-          description: 'Not Found - question or user not found'
+        "404":
+          description: "Not Found - question or user not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/notFound'
+                $ref: "#/components/schemas/notFound"
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
     delete:
-      summary: '老师删除题库中的题目'
+      summary: "老师删除题库中的题目"
       operationId: delete-question-questionType-questionId
       tags:
         - question
@@ -226,43 +229,43 @@ paths:
             type: integer
             format: int32
       responses:
-        '200':
-          description: 'OK - question deleted'
+        "200":
+          description: "OK - question deleted"
           content:
             application/json:
               schema:
                 type: object
-                properties:            
+                properties:
                   question:
                     type: object
-                    $ref: '#/components/schemas/question' 
-        '400':
+                    $ref: "#/components/schemas/question"
+        "400":
           description: Bad Request - Invalid question ID or type or user ID supplied'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/badRequest'
+                $ref: "#/components/schemas/badRequest"
         "403":
           description: "Permission Denied - provided user has no permission to access the question database"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/permissionDenied"
-        '404':
-          description: 'Not Found - question not found'
+        "404":
+          description: "Not Found - question not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/notFound'
+                $ref: "#/components/schemas/notFound"
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /question:
     post:
-      summary: '老师增加题库中的题目'
+      summary: "老师增加题库中的题目"
       operationId: post-question-userId
       tags:
         - question
@@ -273,24 +276,24 @@ paths:
               type: object
               properties:
                 question:
-                  $ref: '#/components/schemas/postQuestion'
+                  $ref: "#/components/schemas/postQuestion"
       responses:
-        '201':
-          description: 'OK - question created'
+        "201":
+          description: "OK - question created"
           content:
             application/json:
               schema:
                 type: object
-                properties:            
+                properties:
                   question:
                     type: object
-                    $ref: '#/components/schemas/question' 
-        '400':
-          description: 'Bad Request - Invalid user ID or question type supplied'
+                    $ref: "#/components/schemas/question"
+        "400":
+          description: "Bad Request - Invalid user ID or question type supplied"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/badRequest'
+                $ref: "#/components/schemas/badRequest"
         "403":
           description: "Permission Denied - provided user has no permission to access the question database"
           content:
@@ -302,7 +305,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
 components:
   schemas:
     question:
