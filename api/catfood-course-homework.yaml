@@ -210,7 +210,7 @@ paths:
       summary: "获取当前该作业下已提交作业列表中共有多少作业文件"
       operationId: get-file-list-for-course-homework
       tags:
-        - course
+        - course-homework
       parameters:
         - name: courseId
           in: path
