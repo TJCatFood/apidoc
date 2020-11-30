@@ -156,7 +156,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     put:
-      summary: "更改作业信息（只有作业标题，作业描述，作业截止时间受影响）"
+      summary: "更改作业信息（只有作业标题、作业描述、作业截止时间受影响，同时作业最后的更新时间会被更新）"
       operationId: get-homework-detail
       tags:
         - course-homework
@@ -205,12 +205,61 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+    delete:
+      summary: "删除这个作业的这个提交"
+      operationId: delete-homework
+      tags:
+        - course-homework
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+        - name: homeworkId
+          in: path
+          description: 作业 ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "OK - File is successfully deleted or there is no homework file for this student."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ok"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - one of the following: provided user has no permission to access the course, given homework is not within the course, user and homework don't match each other or homework is no longer available for handin."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - course or file not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /{courseId}/homework/{homeworkId}/count:
     get:
       summary: "获取当前该作业下已提交作业列表中共有多少作业文件"
       operationId: get-file-list-for-course-homework
       tags:
-        - course
+        - course-homework
       parameters:
         - name: courseId
           in: path
@@ -556,7 +605,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     put:
-      summary: "根据文件登记分数"
+      summary: "根据文件 ID 登记分数"
       operationId: set-file-score-for-course-homework
       tags:
         - course-homework
