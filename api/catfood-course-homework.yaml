@@ -205,6 +205,55 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+    delete:
+      summary: "删除这个作业"
+      operationId: delete-homework
+      tags:
+        - course-homework
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+        - name: homeworkId
+          in: path
+          description: 作业 ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "OK - File is successfully deleted or there is no homework file for this student."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ok"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - one of the following: provided user has no permission to access the course, given homework is not within the course, user and homework don't match each other or homework is no longer available for handin."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - course or file not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /{courseId}/homework/{homeworkId}/count:
     get:
       summary: "获取当前该作业下已提交作业列表中共有多少作业文件"
