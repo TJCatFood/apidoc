@@ -156,7 +156,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     put:
-      summary: "更改作业信息（只有作业标题，作业描述，作业截止时间受影响）"
+      summary: "更改作业信息（只有作业标题、作业描述、作业截止时间受影响，同时作业最后的更新时间会被更新）"
       operationId: get-homework-detail
       tags:
         - course-homework
@@ -206,7 +206,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     delete:
-      summary: "删除这个作业"
+      summary: "删除这个作业的这个提交"
       operationId: delete-homework
       tags:
         - course-homework
@@ -605,7 +605,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     put:
-      summary: "根据文件登记分数"
+      summary: "根据文件 ID 登记分数"
       operationId: set-file-score-for-course-homework
       tags:
         - course-homework
