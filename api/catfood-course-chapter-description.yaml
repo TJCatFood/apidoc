@@ -68,7 +68,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     post:
-      summary: "按照小节 ID 增加该小节详细信息"
+      summary: "按照小节 ID （在请求中提供）增加该小节详细信息"
       operationId: set-chapter-description-within-course
       tags:
         - course-chapter-description
