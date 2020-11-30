@@ -1,0 +1,364 @@
+openapi: 3.0.0
+info:
+  version: 0.0.1
+  title: catfood-course-bulletin
+  description: 理论课程公告板 API
+servers:
+  - url: "http://localhost:8000/api/v1/course-bulletin"
+
+paths:
+  /{courseId}/announcement:
+    get:
+      summary: "按照页码和每页数目获取某门课程下的公告列表"
+      operationId: get-announcement-list-within-course
+      tags:
+        - course-bulletin
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+        - name: itemCountOnOnePage
+          in: query
+          description: 一页返回的个数
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: pageIndex
+          in: query
+          description: 页码
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/courseAnnouncement"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the course"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - course not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: "新建公告"
+      operationId: add-announcement-within-course
+      tags:
+        - course-bulletin
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/courseAnnouncement'
+      responses:
+        "201":
+          description: "Created - Successfully created new announcement"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/courseAnnouncement"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the course"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - course not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /{courseId}/announcement/{announcementId}:
+    get:
+      summary: "按公告 ID 获取某门课程下的某个公告的信息"
+      operationId: get-announcement-within-course
+      tags:
+        - course-bulletin
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: 公告 ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/courseAnnouncement"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the course"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - course not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: "按照公告 ID 修改该公告详细信息。只会更改 announcementTitle, announcementContents, announcementIsPinned. 同时 announcementLastUpdateTime 会被更新。"
+      operationId: alter-announcement-within-course
+      tags:
+        - course-bulletin
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+        - name: announcementId
+          in: path
+          description: 公告 ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/courseAnnouncement'
+      responses:
+        "200":
+          description: "OK - Successfully altered new chapter description"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/courseAnnouncement"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to write to the course"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - course not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: "按照公告 ID 删除该公告"
+      operationId: delete-announcement-within-course
+      tags:
+        - course-bulletin
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+        - name: announcementId
+          in: path
+          description: 公告 ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/ok"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the course"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - course not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+
+components:
+  schemas:
+    courseAnnouncement:
+      type: object
+      required:
+        - announcementUuid
+        - courseId
+        - announcementTitle
+        - announcementContents
+        - announcementIsPinned
+        - announcementPublishTime
+        - announcementLastUpdateTime
+        - announcementSenderId
+      properties:
+        announcementUuid:
+          type: string
+        courseId:
+          type: string
+        announcementTitle:
+          type: string
+        announcementContents:
+          type: string
+        announcementIsPinned:
+          type: boolean
+        announcementPublishTime:
+          type: string
+          format: date-time
+        announcementLastUpdateTime:
+          type: string
+          format: date-time
+        announcementSenderId:
+          type: integer
+          format: int32
+    ok:
+      title: OK
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    badRequest:
+      title: Bad Request
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    permissionDenied:
+      title: Permission Denied
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    notFound:
+      title: Not Found
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    conflict:
+      title: Conflict
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
