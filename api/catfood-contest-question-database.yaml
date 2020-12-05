@@ -28,6 +28,13 @@ paths:
           schema:
             type: integer
             format: int32
+        - name: questionType
+          in: query
+          description: 题目类型（0 -> 单选 1 -> 多选）
+          required: false
+          schema:
+            type: integer
+            format: int32
       responses:
         "200":
           description: "OK - Successfully obtained question list"
