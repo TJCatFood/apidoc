@@ -4,7 +4,7 @@ info:
   title: catfood-course-databse
   description: 课程资料库模块 API
 servers:
-  - url: "http://localhost:8000/api/v1/course-database"
+  - url: "http://localhost:8000/api/v1/course-database/course-file-database"
 
 paths:
   /course/{courseId}:
