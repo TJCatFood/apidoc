@@ -4,7 +4,7 @@ info:
   title: catfood-experiment-file-database
   description: 课程资料库（实验案例存储）模块 API
 servers:
-  - url: "http://localhost:8000/api/v1/experiment-file-database"
+  - url: "http://localhost:8000/api/v1/course-database/experiment-file-database"
 
 paths:
   /experiment/{experimentId}/files:

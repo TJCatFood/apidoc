@@ -4,7 +4,7 @@ info:
   title: catfood-course-homework
   description: 理论课程教学作业模块 API
 servers:
-  - url: "http://localhost:8000/api/v1/course-homework"
+  - url: "http://localhost:8000/api/v1/lecture/course-homework"
 
 paths:
   /{courseId}/homework/:

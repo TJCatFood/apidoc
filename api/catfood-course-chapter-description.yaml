@@ -4,7 +4,7 @@ info:
   title: catfood-course-chapter-description
   description: 理论课程小节信息 API
 servers:
-  - url: "http://localhost:8000/api/v1/course-chapter-description"
+  - url: "http://localhost:8000/api/v1/lecture/course-chapter-description"
 
 paths:
   /{courseId}/chapter:
