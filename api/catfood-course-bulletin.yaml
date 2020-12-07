@@ -1,18 +1,18 @@
 openapi: 3.0.0
 info:
   version: 0.0.1
-  title: catfood-course-chapter-description
-  description: 理论课程小节信息 API
+  title: catfood-course-bulletin
+  description: 理论课程公告板 API
 servers:
-  - url: "http://localhost:8000/api/v1/lecture/course-chapter-description"
+  - url: "http://localhost:8000/api/v1/course-bulletin"
 
 paths:
-  /{courseId}/chapter:
+  /{courseId}/announcement:
     get:
-      summary: "按照页码和每页数目获取某门课程下的小节信息列表"
-      operationId: get-chapter-description-list-within-course
+      summary: "按照页码和每页数目获取某门课程下的公告列表"
+      operationId: get-announcement-list-within-course
       tags:
-        - course-chapter-description
+        - course-bulletin
       parameters:
         - name: courseId
           in: path
@@ -42,7 +42,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/courseChapterDescription"
+                  $ref: "#/components/schemas/courseAnnouncement"
         "400":
           description: "Bad Request"
           content:
@@ -68,10 +68,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     post:
-      summary: "按照小节 ID （在请求中提供）增加该小节详细信息"
-      operationId: set-chapter-description-within-course
+      summary: "新建公告"
+      operationId: add-announcement-within-course
       tags:
-        - course-chapter-description
+        - course-bulletin
       parameters:
         - name: courseId
           in: path
@@ -83,15 +83,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/courseChapterDescription'
+              $ref: '#/components/schemas/courseAnnouncement'
       responses:
         "201":
-          description: "Created - Successfully created new chapter description"
+          description: "Created - Successfully created new announcement"
           content:
             application/json:
               schema:
                 type: object
-                $ref: "#/components/schemas/courseChapterDescription"
+                $ref: "#/components/schemas/courseAnnouncement"
         "400":
           description: "Bad Request"
           content:
@@ -116,12 +116,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /{courseId}/chapter/{id}:
+  /{courseId}/announcement/{announcementId}:
     get:
-      summary: "按小节 ID 获取某门课程下的某个小节的信息"
-      operationId: get-chapter-description-within-course
+      summary: "按公告 ID 获取某门课程下的某个公告的信息"
+      operationId: get-announcement-within-course
       tags:
-        - course-chapter-description
+        - course-bulletin
       parameters:
         - name: courseId
           in: path
@@ -131,11 +131,10 @@ paths:
             type: string
         - name: id
           in: path
-          description: 章节 ID
+          description: 公告 ID
           required: true
           schema:
-            type: integer
-            format: int32
+            type: string
       responses:
         "200":
           description: "OK"
@@ -143,7 +142,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: "#/components/schemas/courseChapterDescription"
+                $ref: "#/components/schemas/courseAnnouncement"
         "400":
           description: "Bad Request"
           content:
@@ -169,10 +168,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     put:
-      summary: "按照小节 ID 修改该小节详细信息，只会更改 courseChapterTitle 和 courseChapterMoocLink"
-      operationId: alter-chapter-description-within-course
+      summary: "按照公告 ID 修改该公告详细信息。只会更改 announcementTitle, announcementContents, announcementIsPinned. 同时 announcementLastUpdateTime 会被更新。"
+      operationId: alter-announcement-within-course
       tags:
-        - course-chapter-description
+        - course-bulletin
       parameters:
         - name: courseId
           in: path
@@ -180,18 +179,17 @@ paths:
           required: true
           schema:
             type: string
-        - name: id
+        - name: announcementId
           in: path
-          description: 章节 ID
+          description: 公告 ID
           required: true
           schema:
-            type: integer
-            format: int32
+            type: string
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/courseChapterDescription'
+              $ref: '#/components/schemas/courseAnnouncement'
       responses:
         "200":
           description: "OK - Successfully altered new chapter description"
@@ -199,7 +197,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: "#/components/schemas/courseChapterDescription"
+                $ref: "#/components/schemas/courseAnnouncement"
         "400":
           description: "Bad Request"
           content:
@@ -225,10 +223,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     delete:
-      summary: "按照小节 ID 删除该小节详细信息"
-      operationId: delete-chapter-description-within-course
+      summary: "按照公告 ID 删除该公告"
+      operationId: delete-announcement-within-course
       tags:
-        - course-chapter-description
+        - course-bulletin
       parameters:
         - name: courseId
           in: path
@@ -236,13 +234,12 @@ paths:
           required: true
           schema:
             type: string
-        - name: id
+        - name: announcementId
           in: path
-          description: 章节 ID
+          description: 公告 ID
           required: true
           schema:
-            type: integer
-            format: int32
+            type: string
       responses:
         "200":
           description: "OK"
@@ -279,20 +276,37 @@ paths:
 
 components:
   schemas:
-    courseChapterDescription:
+    courseAnnouncement:
       type: object
       required:
-        - courseChapterId
-        - courseChapterTitle
-        - courseChapterMoocLink
+        - announcementUuid
+        - courseId
+        - announcementTitle
+        - announcementContents
+        - announcementIsPinned
+        - announcementPublishTime
+        - announcementLastUpdateTime
+        - announcementSenderId
       properties:
-        courseChapterId:
+        announcementUuid:
+          type: string
+        courseId:
+          type: string
+        announcementTitle:
+          type: string
+        announcementContents:
+          type: string
+        announcementIsPinned:
+          type: boolean
+        announcementPublishTime:
+          type: string
+          format: date-time
+        announcementLastUpdateTime:
+          type: string
+          format: date-time
+        announcementSenderId:
           type: integer
           format: int32
-        courseChapterTitle:
-          type: string
-        courseChapterMoocLink:
-          type: string
     ok:
       title: OK
       type: object
