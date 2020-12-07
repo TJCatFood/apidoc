@@ -1,0 +1,275 @@
+openapi: 3.0.0
+info:
+  version: 0.0.1
+  title: catfood-match
+  description: 匹配模块 API
+servers:
+  - url: 'http://localhost:8000/api/v1/match'
+paths:
+  /start:
+    post:
+      summary: '开始匹配 房间满员时发送websocket1(type为1）'
+      operationId: post-startmatch-userId
+      tags:
+        - match
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                studentId:
+                  type: integer
+                  format: int32
+                contestId:
+                  type: integer
+                  format: int32
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  channelId:
+                    type: string
+                  websocket1:
+                    type: object
+                    properties:
+                      type:
+                        type: integer
+                        format: int32
+                      content:
+                        type: string
+        '400':
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'     
+  /cancel:
+    post:
+      summary: '取消匹配'
+      operationId: post-cancelmatch-userId
+      tags:
+        - match
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                studentId:
+                  type: integer
+                  format: int32
+                channelId:
+                  type: string
+      responses:
+        '200':
+          description: 'OK'
+        '400':
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error' 
+  /userindex:
+    get:
+      summary: '获取当前用户在房间中的位置'
+      operationId: get-userindex-userID
+      tags:
+        - match
+      parameters:
+        - name: studentId
+          in: query
+          description: 查询的学生 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: channelId
+          in: query
+          description: 查询的房间 ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  index:  
+                    type: integer
+                    format: int32
+        '400':
+          description: 'Bad Request - Invalid user ID or course ID supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - user or course not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /ready:
+    post:
+      summary: '用户发送准备状态 取消准备则广播websocket2（type为2）
+                确认准备且房间未全部准备则广播websocket3（type为3）
+                确认准备且房间全部准备则广播websocket4（type为4）'
+      operationId: post-ready-userId
+      tags:
+        - match
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                studentId:
+                  type: integer
+                  format: int32
+                channelId:
+                  type: string
+                status:
+                  type: boolean
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  websocket2:
+                    type: object
+                    properties:
+                      type:
+                        type: integer
+                        format: int32
+                      content:
+                        type: string
+                  websocket3:
+                    type: object
+                    properties:
+                      type:
+                        type: integer
+                        format: int32
+                      content:
+                        type: string
+                      readyArray:
+                        type: array
+                        items:
+                          type: boolean
+                  websocket4:
+                    type: object
+                    properties:
+                      type:
+                        type: integer
+                        format: int32
+                      content:
+                        type: string
+                      matchId:
+                        type: integer
+                        format: int32
+        '400':
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error' 
+components:
+  schemas:
+    badRequest:
+      title: Bad Request
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    notFound:
+      title: Not Found
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+    participant:
+      type: object
+      required:
+        - userId
+        - nickname
+        - avatar
+        - rank
+      properties:
+        userId:
+          type: integer
+          format: int32
+        nickname:
+          type: string
+        avatar: 
+          type: string
+        rank:
+          type: integer
+          format: int32
