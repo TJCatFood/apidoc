@@ -116,6 +116,51 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /{courseId}/announcement/count:
+    get:
+      summary: "获取某门课共有多少公告"
+      operationId: get-announcement-count-for-course
+      tags:
+        - course-bulletin
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "OK - Successfully obtained the count of announcements from currrent course"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/announcementCount"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the course"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - course or file not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /{courseId}/announcement/{announcementId}:
     get:
       summary: "按公告 ID 获取某门课程下的某个公告的信息"
@@ -305,6 +350,17 @@ components:
           type: string
           format: date-time
         announcementSenderId:
+          type: integer
+          format: int32
+    announcementCount:
+      type: object
+      required:
+        - courseId
+        - announcementCount
+      properties:
+        courseId:
+          type: string
+        announcementCount:
           type: integer
           format: int32
     ok:
