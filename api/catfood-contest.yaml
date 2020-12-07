@@ -229,6 +229,8 @@ paths:
                     $ref: '#/components/schemas/contest'
                   bIsParticipated:
                     type: boolean
+                  bIsParticipating:
+                    type: boolean
         '400':
           description: 'Bad Request - Invalid course ID supplied'
           content:
@@ -882,6 +884,7 @@ components:
         - universityName
         - schoolId
         - schoolName
+        - personalId
         - matches
       properties:
         userId:
@@ -905,6 +908,9 @@ components:
           format: int32
         schoolName:
           type: string
+        personalId:
+          type: integer
+          format: int32
         matches:
           type: array
           items:
@@ -922,6 +928,7 @@ components:
         - schoolName
         - rank
         - score
+        - personalId
       properties:
         userId:
           type: integer
@@ -948,6 +955,9 @@ components:
           type: integer
           format: int32
         score:
+          type: integer
+          format: int32
+        personalId:
           type: integer
           format: int32
     postQuestion:
