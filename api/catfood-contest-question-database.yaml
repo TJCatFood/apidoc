@@ -7,7 +7,7 @@ servers:
   - url: "http://localhost:8000/api/v1/course-database/contest-question-database"
 
 paths:
-  /questions:
+  /question:
     get:
       summary: "老师按照页码和每页数目查看题库内的所有题目列表"
       operationId: get-questions
@@ -67,7 +67,49 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /questions/count:
+    post:
+      summary: "老师增加题库中的题目"
+      operationId: post-question-userId
+      tags:
+        - question
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  $ref: "#/components/schemas/postQuestion"
+      responses:
+        "201":
+          description: "OK - question created"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  question:
+                    type: object
+                    $ref: "#/components/schemas/question"
+        "400":
+          description: "Bad Request - Invalid user ID or question type supplied"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the question database"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /question/count:
     get:
       summary: "获取题库中题目数量"
       operationId: get-question-count
@@ -264,49 +306,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/notFound"
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-  /question:
-    post:
-      summary: "老师增加题库中的题目"
-      operationId: post-question-userId
-      tags:
-        - question
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                question:
-                  $ref: "#/components/schemas/postQuestion"
-      responses:
-        "201":
-          description: "OK - question created"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  question:
-                    type: object
-                    $ref: "#/components/schemas/question"
-        "400":
-          description: "Bad Request - Invalid user ID or question type supplied"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/badRequest"
-        "403":
-          description: "Permission Denied - provided user has no permission to access the question database"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/permissionDenied"
         default:
           description: Unexpected error
           content:
