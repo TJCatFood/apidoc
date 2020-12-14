@@ -2,21 +2,21 @@ openapi: 3.0.0
 info:
   version: 0.0.1
   title: catfood-experiment-file-database
-  description: 课程资料库（实验案例存储）模块 API
+  description: 实验资料库（实验案例存储）模块 API
 servers:
-  - url: "http://localhost:8000/api/v1/course-database/experiment-file-database"
+  - url: "http://localhost:8000/api/v1/experiment-database/experiment-file-database"
 
 paths:
-  /experiment/{experimentId}/file:
+  /experiment/{experimentId}:
     get:
-      summary: "按照页码和每页数目获取某实验的案例文件列表"
+      summary: "按照页码和每页数目获取某门课的课件列表"
       operationId: get-file-list-for-experiment
       tags:
         - experiment
       parameters:
         - name: experimentId
           in: path
-          description: 实验课程 ID
+          description: 实验 ID
           required: true
           schema:
             type: string
@@ -75,7 +75,7 @@ paths:
       parameters:
         - name: experimentId
           in: path
-          description: 实验课程 ID
+          description: 实验 ID
           required: true
           schema:
             type: string
@@ -113,7 +113,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/badRequest"
         "403":
-          description: "Permission Denied - provided user has no permission to access the experiment"
+          description: "Permission Denied - provided user has no permission to write to the experiment"
           content:
             application/json:
               schema:
@@ -138,7 +138,7 @@ paths:
                 $ref: "#/components/schemas/Error"
   /experiment/{experimentId}/count:
     get:
-      summary: "获取某实验课程共有多少文件"
+      summary: "获取某门课共有多少课件"
       operationId: get-file-list-for-experiment
       tags:
         - experiment
@@ -181,16 +181,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /experiment/{experimentId}/file/{fileId}:
+  /experiment/{experimentId}/{fileId}:
     get:
-      summary: "获取文件"
-      operationId: get-file-for-experiment
+      summary: "获取文件元数据"
+      operationId: get-file-metadata-for-experiment
       tags:
         - experiment
       parameters:
         - name: experimentId
           in: path
-          description: 实验课程 ID
+          description: 实验 ID
           required: true
           schema:
             type: string
@@ -202,67 +202,10 @@ paths:
             type: string
       responses:
         "200":
-          description: "OK - Successfully obtained experiment file"
-          content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
-        "400":
-          description: "Bad Request"
+          description: "OK - Successfully obtained file metadata"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/badRequest"
-        "403":
-          description: "Permission Denied - provided user has no permission to access the experiment"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/permissionDenied"
-        "404":
-          description: "Not Found - experiment or file not found"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/notFound"
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-    put:
-      summary: "修改案例文件注释"
-      operationId: change-file-comments
-      tags:
-        - experiment
-      parameters:
-        - name: experimentId
-          in: path
-          description: 实验课程 ID
-          required: true
-          schema:
-            type: string
-        - name: fileId
-          in: path
-          description: 文件 ID
-          required: true
-          schema:
-            type: string
-        - name: fileComment
-          in: query
-          description: 实验课程文件注释
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: "OK - Successfully changed experiment file description"
-          content:
-            application/json:
-              schema:
-                type: object
                 $ref: "#/components/schemas/experimentFile"
         "400":
           description: "Bad Request"
@@ -288,15 +231,71 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+    put:
+      summary: "修改文件注释"
+      operationId: change-file-comments
+      tags:
+        - experiment
+      parameters:
+        - name: experimentId
+          in: path
+          description: 实验 ID
+          required: true
+          schema:
+            type: string
+        - name: fileId
+          in: path
+          description: 文件 ID
+          required: true
+          schema:
+            type: string
+        - name: fileComment
+          in: query
+          description: 文件注释
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "OK - Successfully changed experiment file description"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/experimentFile"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to write to the experiment"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - experiment or file not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
     delete:
-      summary: "删除该实验课程文件资源"
+      summary: "删除该文件资源"
       operationId: delete-file
       tags:
         - experiment
       parameters:
         - name: experimentId
           in: path
-          description: 实验课程 ID
+          description: 实验 ID
           required: true
           schema:
             type: string
@@ -313,6 +312,58 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ok"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to write to the experiment"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - experiment or file not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /experiment/{experimentId}/{fileId}/file:
+    get:
+      summary: "获取文件"
+      operationId: get-file-for-experiment
+      tags:
+        - experiment
+      parameters:
+        - name: experimentId
+          in: path
+          description: 实验 ID
+          required: true
+          schema:
+            type: string
+        - name: fileId
+          in: path
+          description: 文件 ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "302":
+          description: "Found - Redirecting according to the url generated"
+          headers:
+            location:
+              description: generated URL of the file
+              schema:
+                type: string
+
         "400":
           description: "Bad Request"
           content:
@@ -350,6 +401,7 @@ components:
         - fileUpdateTime
         - fileCreatorId
         - fileSize
+        - fileToken
       properties:
         fileUuid:
           type: string
@@ -368,6 +420,15 @@ components:
         fileSize:
           type: integer
           format: int32
+        fileToken:
+          type: string
+    experimentFileLink:
+      type: object
+      required:
+        - fileLink
+      properties:
+        fileLink:
+          type: string
     experimentFileCount:
       type: object
       required:
