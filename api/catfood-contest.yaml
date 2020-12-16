@@ -180,13 +180,67 @@ paths:
                   courseId:
                     type: integer
                     format: int32
-                  matches:
+                  students:
                     type: array
                     items:
                       $ref: '#/components/schemas/studentMatches'
     
         '400':
           description: 'Bad Request - Invalid contest ID or type supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - contest not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /matches/student:
+    get:
+      summary: '老师查看某门课程下某学生的所有对抗成绩'
+      operationId: get-matches-contestId-1
+      tags:
+        - match
+      parameters:
+        - name: studentId
+          in: query
+          description: 查询的学生 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: courseId
+          in: query
+          description: 查询的课程 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  student:
+                    $ref: '#/components/schemas/studentInfo'
+                  matches:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/matches'
+    
+        '400':
+          description: 'Bad Request'
           content:
             application/json:
               schema:
@@ -287,6 +341,104 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'      
+  /contest/questions/{contestId}:
+    get:
+      summary: '学生获取正在进行的对抗的题目'
+      operationId: get-contest-questions-contestId
+      tags:
+        - contest
+      parameters:
+        - name: constestId
+          in: path
+          description: 比赛 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: studentId
+          in: query
+          description: 学生的用户 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: matchId
+          in: query
+          description: 分配到的匹配 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'OK - Successfully obtained questions'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  questions:
+                    $ref: '#/components/schemas/contestQuestions'
+        '400':
+          description: 'Bad Request - Invalid course ID supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - contest not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /contest/end:
+    get:
+      summary: '老师查看某门课程下已经结束的比赛'
+      operationId: get-contest-end-courseId
+      tags:
+        - contest
+      parameters:
+        - name: courseId
+          in: query
+          description: 查询的课程 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'OK - Successfully obtained questions'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contests:
+                    $ref: '#/components/schemas/contest'
+        '400':
+          description: 'Bad Request - Invalid course ID supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - contest not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /questions:
     get:
       summary: '老师查看题库内的所有题目列表'
@@ -701,6 +853,35 @@ components:
           type: string
         questionChoiceDContent:
           type: string
+    contestQuestions:
+      type: object
+      required:
+        - questionId
+        - questionType
+        - questionChapter
+        - questionContent
+        - questionChoiceAContent
+        - questionChoiceBContent
+      properties:
+        questionId:
+          type: integer
+          format: int32
+        questionType:
+          type: integer
+          format: int32
+        questionChapter:
+          type: integer
+          format: int32
+        questionContent:
+          type: string
+        questionChoiceAContent:
+          type: string
+        questionChoiceBContent:
+          type: string
+        questionChoiceCContent:
+          type: string
+        questionChoiceDContent:
+          type: string
     contest:
       type: object
       required: 
@@ -881,9 +1062,7 @@ components:
         - name
         - avatar
         - universityId
-        - universityName
         - schoolId
-        - schoolName
         - personalId
         - matches
       properties:
@@ -901,13 +1080,9 @@ components:
         universityId:
           type: integer
           format: int32
-        universityName:
-          type: string
         schoolId:
           type: integer
           format: int32
-        schoolName:
-          type: string
         personalId:
           type: integer
           format: int32
@@ -915,6 +1090,37 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/matches'
+    studentInfo:
+      type: object
+      required:
+        - userId
+        - email
+        - name
+        - avatar
+        - universityId
+        - schoolId
+        - personalId
+      properties:
+        userId:
+          type: integer
+          format: int32
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        avatar:
+          type: string
+          format: url
+        universityId:
+          type: integer
+          format: int32
+        schoolId:
+          type: integer
+          format: int32
+        personalId:
+          type: integer
+          format: int32
     userParticipant:
       type: object
       required: 
@@ -923,9 +1129,7 @@ components:
         - name
         - avatar
         - universityId
-        - universityName
         - schoolId
-        - schoolName
         - rank
         - score
         - personalId
@@ -944,13 +1148,9 @@ components:
         universityId:
           type: integer
           format: int32
-        universityName:
-          type: string
         schoolId:
           type: integer
           format: int32
-        schoolName:
-          type: string
         rank:
           type: integer
           format: int32
