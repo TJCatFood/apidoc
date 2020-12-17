@@ -225,6 +225,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error' 
+  /channel:
+    get:
+      summary: '获取用户正在参加的房间 channelID'
+      operationId: get-channel-userId
+      tags:
+        - match
+      parameters:
+        - name: studentId
+          in: query
+          description: 查询的学生 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  channelId:  
+                    type: string
+        '400':
+          description: 'Bad Request - Invalid user ID or course ID supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - user or course not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
     badRequest:
