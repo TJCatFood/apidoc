@@ -776,6 +776,8 @@ components:
       required:
         - homeworkFileUuid
         - homeworkScore
+        - homeworkFileDisplayName
+        - homeworkFileComment
         - homeworkFileCreateTime
         - homeworkFileCreatorId
         - homeworkFileToken
@@ -785,6 +787,10 @@ components:
         homeworkScore:
           type: integer
           format: int32
+        homeworkFileDisplayName:
+          type: string
+        homeworkFileComment:
+          type: string
         homeworkFileCreateTime:
           type: string
           format: date-time
