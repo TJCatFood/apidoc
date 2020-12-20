@@ -79,6 +79,18 @@ paths:
           required: true
           schema:
             type: string
+        - name: fileDisplayName
+          in: query
+          description: 用户希望的文件名（显示）
+          required: true
+          schema:
+            type: string
+        - name: fileComment
+          in: query
+          description: 文件注释
+          required: true
+          schema:
+            type: string
       responses:
         "201":
           description: "Created - Successfully created new file"
