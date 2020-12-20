@@ -83,7 +83,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/courseHomework'
+              $ref: "#/components/schemas/courseHomework"
       responses:
         "201":
           description: "Created - Successfully created new homework"
@@ -216,7 +216,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/courseHomework'
+              $ref: "#/components/schemas/courseHomework"
       responses:
         "200":
           description: "OK - Course homework details is successfullt altered"
@@ -434,16 +434,20 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: string
-              format: binary
+        - name: fileDisplayName
+          in: query
+          description: 用户希望的文件名（显示）
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: "OK - Successfully rewrite original file"
+          headers:
+            FILE_UPLOAD_URL:
+              description: generated POST URL of the file
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -451,6 +455,11 @@ paths:
                 $ref: "#/components/schemas/courseHomeworkFile"
         "201":
           description: "Created - Successfully created new file"
+          headers:
+            FILE_UPLOAD_URL:
+              description: generated POST URL of the file
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -561,13 +570,13 @@ paths:
           schema:
             type: string
       responses:
-        "200":
-          description: "OK - Successfully obtained homework file"
-          content:
-            application/octet-stream:
+        "302":
+          description: "Found - Redirecting according to the url generated"
+          headers:
+            location:
+              description: generated URL of the file
               schema:
                 type: string
-                format: binary
         "400":
           description: "Bad Request"
           content:
@@ -677,7 +686,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/courseHomeworkFileScore'
+              $ref: "#/components/schemas/courseHomeworkFileScore"
       responses:
         "200":
           description: "Ok - Successfully altered homework score"
@@ -769,7 +778,7 @@ components:
         - homeworkScore
         - homeworkFileCreateTime
         - homeworkFileCreatorId
-        - homeworkFileSize
+        - homeworkFileToken
       properties:
         homeworkFileUuid:
           type: string
@@ -781,9 +790,8 @@ components:
           format: date-time
         homeworkFileCreatorId:
           type: string
-        homeworkFileSize:
-          type: integer
-          format: int32
+        homeworkFileToken:
+          type: string
     courseHomeworkFileCount:
       type: object
       required:
