@@ -116,6 +116,51 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /{courseId}/homework/count:
+    get:
+      summary: "获取某门课共有多少作业"
+      operationId: get-homework-count-for-course
+      tags:
+        - course-homework
+      parameters:
+        - name: courseId
+          in: path
+          description: 课程 ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "OK - Successfully obtained the count of announcements from currrent course"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/courseHomeworkCount"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the course"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        "404":
+          description: "Not Found - course or file not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/notFound"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /{courseId}/homework/{homeworkId}:
     get:
       summary: "获取某门课程下的某次作业详细信息（非提交文件）"
@@ -206,7 +251,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     delete:
-      summary: "删除这个作业的这个提交"
+      summary: "删除这个作业"
       operationId: delete-homework
       tags:
         - course-homework
@@ -682,6 +727,7 @@ components:
         - homeworkDescription
         - homeworkCreateTime
         - homeworkUpdateTime
+        - homeworkStartTime
         - homeworkEndTime
         - homeworkCreatorId
       properties:
@@ -697,11 +743,25 @@ components:
         homeworkUpdateTime:
           type: string
           format: date-time
+        homeworkStartTime:
+          type: string
+          format: date-time
         homeworkEndTime:
           type: string
           format: date-time
         homeworkCreatorId:
           type: string
+    courseHomeworkCount:
+      type: object
+      required:
+        - courseId
+        - courseHomeworkCount
+      properties:
+        courseId:
+          type: string
+        courseHomeworkCount:
+          type: integer
+          format: int32
     courseHomeworkFile:
       type: object
       required:
