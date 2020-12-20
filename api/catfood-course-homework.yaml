@@ -796,11 +796,11 @@ components:
       type: object
       required:
         - courseId
-        - courseFileCount
+        - courseHomeworkFileCount
       properties:
         courseId:
           type: string
-        courseFileCount:
+        courseHomeworkFileCount:
           type: integer
           format: int32
     courseHomeworkFileScore:
