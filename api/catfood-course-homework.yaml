@@ -434,12 +434,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: fileDisplayName
-          in: query
-          description: 用户希望的文件名（显示）
-          required: true
-          schema:
-            type: string
       responses:
         "200":
           description: "OK - Successfully rewrite original file"
@@ -776,6 +770,8 @@ components:
       required:
         - homeworkFileUuid
         - homeworkScore
+        - homeworkFileDisplayName
+        - homeworkFileComment
         - homeworkFileCreateTime
         - homeworkFileCreatorId
         - homeworkFileToken
@@ -785,6 +781,10 @@ components:
         homeworkScore:
           type: integer
           format: int32
+        homeworkFileDisplayName:
+          type: string
+        homeworkFileComment:
+          type: string
         homeworkFileCreateTime:
           type: string
           format: date-time
