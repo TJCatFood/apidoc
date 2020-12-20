@@ -434,12 +434,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: fileDisplayName
-          in: query
-          description: 用户希望的文件名（显示）
-          required: true
-          schema:
-            type: string
       responses:
         "200":
           description: "OK - Successfully rewrite original file"
