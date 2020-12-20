@@ -273,6 +273,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /matchid:
+    get:
+      summary: '学生获取当前自己正在进行的 match ID'
+      operationId: get-matchId-userId
+      tags:
+        - match
+      parameters:
+        - name: userId
+          in: query
+          description: 查询的用户的 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: contestId
+          in: query
+          description: 查询的比赛的 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  matchId:
+                    type: integer
+                    format: int32
+        '400':
+          description: 'Bad Request - Invalid match ID supplied'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found - match not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /contest:
     get:
       summary: '获取某门课程下的还未开始的比赛（一个或没有'
