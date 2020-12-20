@@ -299,7 +299,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /{courseId}/homework/{homeworkId}/count:
+  /{courseId}/homework/{homeworkId}/file/count:
     get:
       summary: "获取当前该作业下已提交作业列表中共有多少作业文件"
       operationId: get-file-list-for-course-homework
