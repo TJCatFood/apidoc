@@ -93,7 +93,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /matches/{contestId}?type=0: 
+  /matches/{contestId}: 
     get:
       summary: '老师查看某次比赛的所有对抗成绩'
       operationId: get-matches-contestId-0
@@ -103,13 +103,6 @@ paths:
         - name: contestId
           in: path
           description: 查询的比赛的 ID
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: type
-          in: query
-          description: 确定返回的数据类型
           required: true
           schema:
             type: integer
@@ -144,63 +137,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/contestMatches'
                   pagination:
-                    $ref: '#/components/schemas/pagination'
-    
-        '400':
-          description: 'Bad Request - Invalid contest ID or type supplied'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/badRequest'
-        '404':
-          description: 'Not Found - contest not found'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/notFound'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /matches/{contestId}?type=1: 
-    get:
-      summary: '老师查看某次比赛的所有对抗成绩'
-      operationId: get-matches-contestId-1
-      tags:
-        - match
-      parameters:
-        - name: contestId
-          in: path
-          description: 查询的比赛的 ID
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: type
-          in: query
-          description: 确定返回的数据类型
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: 'OK - 成功获取比赛列表，type 为 0 时以对抗为单位，type 为 1 时以学生为单位'
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  courseId:
-                    type: integer
-                    format: int32
-                  students:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/studentMatches'
-    
+                    $ref: '#/components/schemas/pagination'  
         '400':
           description: 'Bad Request - Invalid contest ID or type supplied'
           content:
@@ -280,7 +217,7 @@ paths:
       tags:
         - match
       parameters:
-        - name: userId
+        - name: studentId
           in: query
           description: 查询的用户的 ID
           required: true
@@ -305,6 +242,9 @@ paths:
                   matchId:
                     type: integer
                     format: int32
+                  timeStamp:
+                    type: string
+                    format: date-time
         '400':
           description: 'Bad Request - Invalid match ID supplied'
           content:
@@ -781,7 +721,7 @@ components:
       type: object
       required:
         - userId
-        - constestId
+        - contestId
         - courseId
         - timeStamp
         - title
@@ -793,13 +733,19 @@ components:
         - description
         - rank
         - score
-        - participants
+        # - participants
         - questionAndAnswers
+        - name
+        - avatar
       properties:
+        name:
+          type: string
+        avatar:
+          type: string
         userId:
           type: integer
           format: int32
-        constestId:
+        contestId:
           type: integer
           format: int32
         courseId:
@@ -833,10 +779,10 @@ components:
         score:
           type: integer
           format: int32
-        participants:
-          type: array
-          items:
-            $ref: '#/components/schemas/participant'
+        # participants:
+        #   type: array
+        #   items:
+        #     $ref: '#/components/schemas/participant'
         questionAndAnswers:
           type: array
           items:
