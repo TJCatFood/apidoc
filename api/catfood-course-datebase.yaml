@@ -91,16 +91,14 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: string
-              format: binary
       responses:
         "201":
           description: "Created - Successfully created new file"
+          headers:
+            FILE_UPLOAD_URL:
+              description: generated POST URL of the file
+              schema:
+                type: string
           content:
             application/json:
               schema:
