@@ -9,7 +9,7 @@ servers:
 paths:
   /question:
     get:
-      summary: "老师按照页码和每页数目查看题库内的所有题目列表"
+      summary: "老师按照页码和每页数目，选择章节范围查看题库内的所有题目列表"
       operationId: get-questions
       tags:
         - question
@@ -31,6 +31,20 @@ paths:
         - name: questionType
           in: query
           description: 题目类型（0 -> 单选 1 -> 多选）
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: chapterStart
+          in: query
+          description: 起始章节标号（与结束章节标号成对出现）
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: chapterEnd
+          in: query
+          description: 结束章节标号（与起始章节标号成对出现）
           required: false
           schema:
             type: integer
@@ -312,6 +326,74 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /question/random:
+    get:
+      summary: "老师按照章节范围筛选题目，按照指定单选多选题个数进行组题"
+      operationId: get-random-questions
+      tags:
+        - question
+      parameters:
+        - name: singleChoiceQuestionNum
+          in: query
+          description: 单选题个数
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: multipleChoiceQuestionNum
+          in: query
+          description: 多选题个数
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: chapterStart
+          in: query
+          description: 起始章节标号（与结束章节标号成对出现）
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: chapterEnd
+          in: query
+          description: 结束章节标号（与起始章节标号成对出现）
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "OK - Successfully obtained question list"
+          content:
+            application/json:
+              schema:
+                properties:
+                  questions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/questions"
+                  singleChoiceQuestionStats:
+                    type: boolean
+                  multipleChoiceQuestionStats:
+                    type: boolean
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+        "403":
+          description: "Permission Denied - provided user has no permission to access the question database"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/permissionDenied"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 components:
   schemas:
     question:
@@ -324,6 +406,8 @@ components:
         - questionAnswer
         - questionChoiceAContent
         - questionChoiceBContent
+        - questionChoiceCContent
+        - questionChoiceDContent
       properties:
         questionId:
           type: integer
@@ -382,6 +466,8 @@ components:
         - questionAnswer
         - questionChoiceAContent
         - questionChoiceBContent
+        - questionChoiceCContent
+        - questionChoiceDContent
       properties:
         questionType:
           type: integer
@@ -409,6 +495,8 @@ components:
         - questionAnswer
         - questionChoiceAContent
         - questionChoiceBContent
+        - questionChoiceCContent
+        - questionChoiceDContent
       properties:
         questionChapter:
           type: integer
