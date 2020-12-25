@@ -299,7 +299,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /{courseId}/homework/{homeworkId}/count:
+  /{courseId}/homework/{homeworkId}/file/count:
     get:
       summary: "获取当前该作业下已提交作业列表中共有多少作业文件"
       operationId: get-file-list-for-course-homework
@@ -431,12 +431,6 @@ paths:
         - name: homeworkId
           in: path
           description: 作业 ID
-          required: true
-          schema:
-            type: string
-        - name: fileDisplayName
-          in: query
-          description: 用户希望的文件名（显示）
           required: true
           schema:
             type: string
@@ -802,11 +796,11 @@ components:
       type: object
       required:
         - courseId
-        - courseFileCount
+        - courseHomeworkFileCount
       properties:
         courseId:
           type: string
-        courseFileCount:
+        courseHomeworkFileCount:
           type: integer
           format: int32
     courseHomeworkFileScore:
