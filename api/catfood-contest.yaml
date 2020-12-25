@@ -68,6 +68,13 @@ paths:
           schema:
             type: integer
             format: int32
+        - name: studentId
+          in: query
+          description: 查询的学生的 ID
+          required: true
+          schema:
+            type: integer
+            format: int32
       responses:
         '200':
           description: 'OK - Successfully obtained match'
@@ -299,9 +306,9 @@ paths:
           schema:
             type: integer
             format: int32
-        - name: studentId
+        - name: userId
           in: query
-          description: 查询的学生 ID
+          description: 查询的用户 ID
           required: true
           schema:
             type: integer
@@ -508,7 +515,9 @@ paths:
                 type: object
                 properties:
                   contests:
-                    $ref: '#/components/schemas/contest'
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/contest'
         '400':
           description: 'Bad Request - Invalid course ID supplied'
           content:
@@ -743,6 +752,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /submission:
+    post:
+      summary: '学生提交自己的答案'
+      operationId: post-submission-userId-channelId
+      tags:
+        - contest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/submission'
+      responses:
+        '201':
+          description: 'OK'
+        '400':
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+        '404':
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'      
 components:
   schemas:
     matches:
@@ -1292,3 +1333,28 @@ components:
         total:
           type: integer
           format: int32
+    submission:
+      type: object
+      required:
+        - studentId
+        - channelId
+        - answers
+      properties:
+        studentId:
+          type: integer
+          format: int32
+        channelId:
+          type: string
+        answers:
+          type: array
+          items:
+            type: object
+            properties:
+              questionId:
+                type: integer
+                format: int32
+              questionType:
+                type: integer
+                format: int32
+              answer:
+                type: string
