@@ -13,9 +13,9 @@ paths:
       tags:
         - Account
       parameters:
-      - name: userToken
+      - name: session_id
         in: cookie
-        description: '（自动登录）用于鉴权的用户Token'
+        description: '（自动登录）用于鉴权的用户session'
         required: true
         schema:
           type: string
@@ -25,11 +25,11 @@ paths:
             schema:
               properties:
                   userID: 
-                    description: '（无Token时）登录的用户 ID'
+                    description: '（无session时）登录的用户 ID'
                     type: integer
                     format: int32
-                  passwordDigest:
-                    description: '（无Token时）密码哈希'
+                  password:
+                    description: '（无session时）密码'
                     type: string                 
       responses:
         '200':
@@ -44,7 +44,7 @@ paths:
                   data:
                     $ref: '#/components/schemas/accountMessage'
         '400':
-          description: 'Bad Request - Invalid user ID or userToken'
+          description: 'Bad Request - Invalid user ID or session_id'
           content:
             application/json:
               schema:
@@ -55,6 +55,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/notFound'
+        '500':
+          description: 'Internal Server Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logout:
+    post:
+      summary: '登出账户'
+      operationId: post-logout
+      tags:
+        - Account
+      parameters:
+      - name: session_id
+        in: cookie
+        description: '（自动登录）用于鉴权的用户session'
+        required: true
+        schema:
+          type: string              
+      responses:
+        '200':
+          description: 'OK - Successfully Logout'
+          content:
+            application/json:
+              schema:
+                properties:
+                  isSuccess:
+                    type: boolean
+                    default: true
+        '400':
+          description: 'Bad Request - Invalid session_id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
         '500':
           description: 'Internal Server Error'
           content:
@@ -75,9 +110,9 @@ paths:
           schema:
             type: integer
             format: int32
-        - name: userToken
+        - name: session_id
           in: cookie
-          description: '用于鉴权的用户Token'
+          description: '用于鉴权的用户session'
           required: true
           schema:
             type: string
@@ -117,9 +152,9 @@ paths:
       tags:
         - Grade
       parameters:
-        - name: userToken
+        - name: session_id
           in: cookie
-          description: 用于鉴权的用户Token
+          description: 用于鉴权的用户session
           required: true
           schema:
             type: string
@@ -166,9 +201,9 @@ paths:
       tags:
         - Grade
       parameters:
-        - name: userToken
+        - name: session_id
           in: cookie
-          description: '用于鉴权的用户Token'
+          description: '用于鉴权的用户session'
           required: true
           schema:
             type: string
@@ -224,9 +259,9 @@ paths:
       tags:
         - Grade
       parameters:
-        - name: userToken
+        - name: session_id
           in: cookie
-          description: '用于鉴权的用户Token'
+          description: '用于鉴权的用户session'
           required: true
           schema:
             type: string
@@ -323,19 +358,12 @@ paths:
       tags:
         - Account
       parameters:
-      - name: userToken
+      - name: session_id
         in: cookie
-        description: '用于鉴权的用户Token'
+        description: '用于鉴权的用户session'
         required: true
         schema:
           type: string
-      - name: userID
-        in: query
-        description: '当前账户 ID'
-        required: true
-        schema:
-          type: integer
-          format: int32
       responses:
         '201':
           description: 'OK - Get Account Message Success'
@@ -372,9 +400,9 @@ paths:
       tags:
         - Account
       parameters:
-      - name: userToken
+      - name: session_id
         in: cookie
-        description: '用于鉴权的用户Token'
+        description: '用于鉴权的用户session'
         required: true
         schema:
           type: string
@@ -382,13 +410,7 @@ paths:
         content:
           application/json:
             schema:
-              required: 
-                - userID
-              properties:
-                userID:
-                  description: 要更新信息的账户 ID
-                  type: integer
-                  format: int32        
+              properties:      
                 email:
                   description: 更新后的邮箱
                   type: string
@@ -435,9 +457,9 @@ paths:
       tags:
         - Account
       parameters:
-      - name: userToken
+      - name: session_id
         in: cookie
-        description: '用于鉴权的用户Token'
+        description: '用于鉴权的用户session'
         required: true
         schema:
           type: string
@@ -446,19 +468,14 @@ paths:
           application/json:
             schema:
               required: 
-                - userID 
-                - previousPasswordDigest
-                - newPasswordDigest
+                - previouspassword
+                - newpassword
               properties:
-                userID:
-                  description: 要修改密码的账户 ID
-                  type: integer
-                  format: int32
-                previousPasswordDigest:
-                  description: 原先密码的摘要值
+                previouspassword:
+                  description: 原先密码
                   type: string
-                newPasswordDigest:
-                  description: 修改后密码的摘要值
+                newpassword:
+                  description: 修改后密码
                   type: string
       responses:
         '201':
@@ -492,9 +509,9 @@ paths:
       tags:
         - Account
       parameters:
-      - name: userToken
+      - name: session_id
         in: cookie
-        description: '用于鉴权的用户Token'
+        description: '用于鉴权的用户session'
         required: true
         schema:
           type: string        
@@ -531,9 +548,9 @@ paths:
       tags:
         - Grade
       parameters:
-        - name: userToken
+        - name: session_id
           in: cookie
-          description: '用于鉴权的用户Token'
+          description: '用于鉴权的用户session'
           required: true
           schema:
             type: string
@@ -619,18 +636,13 @@ components:
       title: Account
       type: object
       required: 
-        - userID
-        - passwordDigest
+        - password
         - universityID
         - schoolID
         - personalID    
       properties:
-        userID:
-          description: 账户 ID
-          type: integer
-          format: int32
-        passwordDigest:
-          description: 密码摘要值
+        password:
+          description: 密码
           type: string
         realname:
           description: 用户姓名
@@ -720,7 +732,7 @@ components:
         - character
         - personalID
         - avatar
-        - userToken
+        - session_id
       properties:
         userID:
           description: 账户 ID
@@ -752,7 +764,7 @@ components:
           description: 用户头像
           type: string
           format: url
-        userToken:
+        session_id:
           description: 鉴权口令
           type: string
 
