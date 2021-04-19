@@ -83,7 +83,7 @@ paths:
         "201":
           description: "Created - Successfully created new file"
           headers:
-            FILE_UPLOAD_URL:
+            FILE_PUT_URL:
               description: generated POST URL of the file
               schema:
                 type: string

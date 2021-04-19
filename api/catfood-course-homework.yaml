@@ -437,11 +437,6 @@ paths:
       responses:
         "200":
           description: "OK - Successfully rewrite original file"
-          headers:
-            FILE_UPLOAD_URL:
-              description: generated POST URL of the file
-              schema:
-                type: string
           content:
             application/json:
               schema:
@@ -449,11 +444,6 @@ paths:
                 $ref: "#/components/schemas/courseHomeworkFile"
         "201":
           description: "Created - Successfully created new file"
-          headers:
-            FILE_UPLOAD_URL:
-              description: generated POST URL of the file
-              schema:
-                type: string
           content:
             application/json:
               schema:
@@ -775,6 +765,7 @@ components:
         - homeworkFileCreateTime
         - homeworkFileCreatorId
         - homeworkFileToken
+        - FILE_PUT_URL
       properties:
         homeworkFileUuid:
           type: string
@@ -791,6 +782,9 @@ components:
         homeworkFileCreatorId:
           type: string
         homeworkFileToken:
+          type: string
+        FILE_PUT_URL:
+          description: generated PUT URL of the file
           type: string
     courseHomeworkFileCount:
       type: object
